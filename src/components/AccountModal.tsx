@@ -28,6 +28,8 @@ export const AccountModal: React.FC<AccountModalProps> = ({ isOpen, onClose }) =
 
   const { likedSongIds, favorites, playlists, recentSongIds, restoreUserData, restoreFromCloud } = usePlaylist();
   const [statusMsg, setStatusMsg] = useState<{ text: string; type: 'success' | 'error' } | null>(null);
+  const [googleEmail, setGoogleEmail] = useState('');
+  const [showEmailInput, setShowEmailInput] = useState(false);
 
   if (!isOpen) return null;
 
@@ -36,8 +38,14 @@ export const AccountModal: React.FC<AccountModalProps> = ({ isOpen, onClose }) =
     setTimeout(() => setStatusMsg(null), 4000);
   };
 
-  const handleGoogleLogin = async () => {
-    const res = await loginWithGoogle();
+  const handleGoogleLogin = async (explicitEmail?: string) => {
+    const emailToUse = (explicitEmail || googleEmail).trim().toLowerCase();
+    if (showEmailInput && (!emailToUse || !emailToUse.includes('@'))) {
+      showMsg('कृपया वैध Google / Gmail पता दर्ज करें।', 'error');
+      return;
+    }
+
+    const res = await loginWithGoogle(emailToUse || undefined);
     if (res.success) {
       if (res.cloudData && res.cloudData.likedSongIds.length > 0) {
         restoreUserData(res.cloudData.likedSongIds, res.cloudData.playlists, res.cloudData.recentSongIds, res.cloudData.likedSongs);
@@ -51,7 +59,8 @@ export const AccountModal: React.FC<AccountModalProps> = ({ isOpen, onClose }) =
         }
       }
     } else {
-      showMsg(res.error || 'Google login failed.', 'error');
+      setShowEmailInput(true);
+      showMsg(res.error || 'कृपया अपना Gmail दर्ज करें:', 'error');
     }
   };
 
@@ -203,27 +212,59 @@ export const AccountModal: React.FC<AccountModalProps> = ({ isOpen, onClose }) =
             </div>
           ) : (
             /* UNREGISTERED / PROMPT GOOGLE SIGN IN */
-            <div className="space-y-5 text-center animate-fade-in">
+            <div className="space-y-4 text-center animate-fade-in">
               <div className="w-16 h-16 rounded-3xl bg-white/5 border border-retro-gold/30 flex items-center justify-center mx-auto shadow-inner text-retro-gold">
                 <Cloud className="w-8 h-8" />
               </div>
 
               <div className="space-y-1">
                 <h3 className="font-serif font-bold text-base text-retro-cream">
-                  Sign in with Google
+                  Google Account Sign In
                 </h3>
                 <p className="text-xs text-white/60 max-w-xs mx-auto leading-relaxed">
                   Backup and restore your playlists and favorite music seamlessly across your devices.
                 </p>
               </div>
 
-              {/* Single Official Google Button */}
-              <GoogleSignInButton
-                onClick={handleGoogleLogin}
-                disabled={isSyncing}
-              />
+              {showEmailInput ? (
+                <form
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    handleGoogleLogin();
+                  }}
+                  className="space-y-2.5 pt-2"
+                >
+                  <input
+                    type="email"
+                    value={googleEmail}
+                    onChange={(e) => setGoogleEmail(e.target.value)}
+                    placeholder="Enter your Gmail address..."
+                    className="w-full px-4 py-3 rounded-2xl bg-[#0D0407] border border-retro-gold/50 text-white placeholder-white/40 text-sm focus:outline-none focus:ring-2 focus:ring-retro-gold"
+                    autoFocus
+                  />
+                  <button
+                    type="submit"
+                    disabled={isSyncing}
+                    className="w-full py-3 px-4 rounded-2xl bg-gradient-to-r from-retro-gold via-amber-400 to-amber-500 text-retro-dark font-bold text-sm shadow-lg flex items-center justify-center gap-2 active:scale-95 transition-all"
+                  >
+                    {isSyncing ? (
+                      <>
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                        <span>Connecting...</span>
+                      </>
+                    ) : (
+                      <span>Connect Google Account</span>
+                    )}
+                  </button>
+                </form>
+              ) : (
+                <GoogleSignInButton
+                  onClick={() => handleGoogleLogin()}
+                  disabled={isSyncing}
+                />
+              )}
 
-              {isSyncing && (
+              {isSyncing && !showEmailInput && (
                 <div className="flex items-center justify-center gap-2 text-xs text-retro-gold pt-1">
                   <Loader2 className="w-4 h-4 animate-spin" />
                   <span>Signing in with Google...</span>

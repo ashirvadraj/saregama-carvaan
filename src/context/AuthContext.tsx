@@ -11,7 +11,7 @@ interface AuthContextType {
   isWelcomeModalOpen: boolean;
   setIsAccountModalOpen: (open: boolean) => void;
   setIsWelcomeModalOpen: (open: boolean) => void;
-  loginWithGoogle: () => Promise<{ success: boolean; cloudData?: BackupData; error?: string }>;
+  loginWithGoogle: (explicitEmail?: string, explicitName?: string) => Promise<{ success: boolean; cloudData?: BackupData; error?: string }>;
   syncNow: (data: { likedSongIds: string[]; playlists: Playlist[]; recentSongIds: string[]; likedSongs?: any[] }) => Promise<boolean>;
   logout: () => void;
   dismissWelcome: () => void;
@@ -32,43 +32,33 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setIsWelcomeModalOpen(false);
   };
 
-  const loginWithGoogle = async () => {
+  const loginWithGoogle = async (explicitEmail?: string, explicitName?: string) => {
     setIsSyncing(true);
     try {
-      let email = '';
-      let name = '';
+      let email = (explicitEmail || '').trim().toLowerCase();
+      let name = (explicitName || '').trim();
       let sub = '';
 
-      const cap = (window as any).Capacitor;
-      if (cap?.Plugins?.MediaNotificationPlugin?.startOfficialGoogleSignIn) {
-        const res = await cap.Plugins.MediaNotificationPlugin.startOfficialGoogleSignIn();
-        if (res?.success && res.email) {
-          email = res.email;
-          name = res.name || GoogleAuthService.createProfile(res.email).name;
-          sub = res.sub || `g_${Date.now()}`;
-        } else if (res?.error) {
-          setIsSyncing(false);
-          return { success: false, error: res.error };
-        }
-      }
-
-      // Fallback: system accounts
       if (!email) {
-        if (cap?.Plugins?.MediaNotificationPlugin?.getDeviceGoogleAccounts) {
-          const res = await cap.Plugins.MediaNotificationPlugin.getDeviceGoogleAccounts();
-          if (res?.accounts && Array.isArray(res.accounts) && res.accounts.length > 0) {
-            email = res.accounts[0].email;
-            name = res.accounts[0].name || GoogleAuthService.createProfile(res.accounts[0].email).name;
-          }
+        const cap = (window as any).Capacitor;
+        if (cap?.Plugins?.MediaNotificationPlugin?.startOfficialGoogleSignIn) {
+          try {
+            const res = await cap.Plugins.MediaNotificationPlugin.startOfficialGoogleSignIn();
+            if (res?.success && res.email) {
+              email = res.email.toLowerCase().trim();
+              name = res.name || GoogleAuthService.createProfile(res.email).name;
+              sub = res.sub || `g_${Date.now()}`;
+            }
+          } catch {}
         }
       }
 
       if (!email) {
         setIsSyncing(false);
-        return { success: false, error: 'Please select a Google Account.' };
+        return { success: false, error: 'Please enter your Google / Gmail address.' };
       }
 
-      const profile = GoogleAuthService.createProfile(email, name, undefined, sub);
+      const profile = GoogleAuthService.createProfile(email, name || undefined, undefined, sub || undefined);
       setUser(profile);
       dismissWelcome();
 
