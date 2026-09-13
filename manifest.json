@@ -1,0 +1,23 @@
+{
+  "name": "सुनहरे गीत - Sunehre Geet",
+  "short_name": "सुनहरे गीत",
+  "description": "Vintage Bollywood & International Retro Music",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0c0817",
+  "theme_color": "#0c0817",
+  "icons": [
+    {
+      "src": "/logo.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
