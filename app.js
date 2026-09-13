@@ -1,4 +1,4 @@
-﻿// Saregama Carvaan - Complete Audio & Lyrics Engine
+﻿// Saregama Carvaan - Universal Audio & Lyrics Engine
 
 (function() {
   const state = {
@@ -8,13 +8,13 @@
     currentSong: null,
     isPlaying: false,
     isShuffle: false,
-    currentMode: 'all', // 'all', 'artists', 'geetmala', 'interviews', 'favorites'
+    currentMode: 'all',
     currentArtist: 'ALL',
     searchQuery: '',
     favorites: JSON.parse(localStorage.getItem('carvaan_favs') || '[]'),
     
     // Audio Source
-    sourceType: localStorage.getItem('carvaan_source_type') || 'local',
+    sourceType: localStorage.getItem('carvaan_source_type') || 'auto',
     cloudBaseUrl: localStorage.getItem('carvaan_cloud_url') || '',
     localDirectoryHandle: null,
     localFileMap: new Map(),
@@ -54,6 +54,20 @@
   const btnSaveCloud = document.getElementById('btn-save-cloud');
   const cloudUrlInput = document.getElementById('cloud-url-input');
   const localStatus = document.getElementById('local-status');
+  const sourceLabel = document.getElementById('source-label');
+
+  // Hidden Universal File Input for all browsers
+  let hiddenFolderInput = document.getElementById('hidden-folder-input');
+  if (!hiddenFolderInput) {
+    hiddenFolderInput = document.createElement('input');
+    hiddenFolderInput.type = 'file';
+    hiddenFolderInput.id = 'hidden-folder-input';
+    hiddenFolderInput.setAttribute('webkitdirectory', '');
+    hiddenFolderInput.setAttribute('directory', '');
+    hiddenFolderInput.setAttribute('multiple', '');
+    hiddenFolderInput.style.display = 'none';
+    document.body.appendChild(hiddenFolderInput);
+  }
 
   // INIT
   function init() {
@@ -62,6 +76,14 @@
     bindEvents();
     setupMediaSession();
     updateLcdMode();
+    checkSavedConfig();
+  }
+
+  function checkSavedConfig() {
+    if (state.cloudBaseUrl) {
+      cloudUrlInput.value = state.cloudBaseUrl;
+      sourceLabel.textContent = "Cloud Mode";
+    }
   }
 
   // EVENT BINDINGS
@@ -104,6 +126,11 @@
       vinylIcon.classList.remove('playing');
     });
 
+    audio.addEventListener('error', (e) => {
+      console.warn("Audio playback error:", audio.error);
+      showAudioSourcePrompt();
+    });
+
     // Search
     searchInput.addEventListener('input', (e) => {
       state.searchQuery = e.target.value.toLowerCase().trim();
@@ -143,35 +170,17 @@
     btnSource.addEventListener('click', () => sourceModal.classList.add('open'));
     btnCloseModal.addEventListener('click', () => sourceModal.classList.remove('open'));
     
-    // Directory Picker for Offline Local Audio
-    btnPickFolder.addEventListener('click', async () => {
-      try {
-        if ('showDirectoryPicker' in window) {
-          const dirHandle = await window.showDirectoryPicker();
-          state.localDirectoryHandle = dirHandle;
-          localStatus.textContent = `Linked: ${dirHandle.name}`;
-          localStatus.style.color = '#50e37b';
-          state.sourceType = 'local';
-          localStorage.setItem('carvaan_source_type', 'local');
-          sourceModal.classList.remove('open');
-        } else {
-          // Fallback input element
-          const input = document.createElement('input');
-          input.type = 'file';
-          input.webkitdirectory = true;
-          input.onchange = (e) => {
-            for (const file of e.target.files) {
-              state.localFileMap.set(file.name.toLowerCase(), file);
-            }
-            localStatus.textContent = `Loaded ${state.localFileMap.size} files`;
-            localStatus.style.color = '#50e37b';
-            sourceModal.classList.remove('open');
-          };
-          input.click();
-        }
-      } catch (err) {
-        console.warn("Folder picker error or cancelled", err);
+    // Pick Folder via Native File Input
+    btnPickFolder.addEventListener('click', () => {
+      if ('showDirectoryPicker' in window && window.isSecureContext) {
+        pickDirectoryModern();
+      } else {
+        hiddenFolderInput.click();
       }
+    });
+
+    hiddenFolderInput.addEventListener('change', (e) => {
+      loadFilesFromList(e.target.files);
     });
 
     btnSaveCloud.addEventListener('click', () => {
@@ -181,16 +190,84 @@
         state.sourceType = 'cloud';
         localStorage.setItem('carvaan_cloud_url', url);
         localStorage.setItem('carvaan_source_type', 'cloud');
+        sourceLabel.textContent = "Cloud Mode";
         sourceModal.classList.remove('open');
+        if (state.currentSong) playSong(state.currentSong);
       }
     });
+  }
+
+  async function pickDirectoryModern() {
+    try {
+      const dirHandle = await window.showDirectoryPicker();
+      state.localDirectoryHandle = dirHandle;
+      
+      // Index all files in directory
+      state.localFileMap.clear();
+      await scanDirectoryHandle(dirHandle);
+      
+      const count = state.localFileMap.size;
+      localStatus.textContent = `Linked ${count} audio files from "${dirHandle.name}"`;
+      localStatus.style.color = '#50e37b';
+      sourceLabel.textContent = `Linked (${count})`;
+      sourceModal.classList.remove('open');
+
+      if (state.currentSong) {
+        playSong(state.currentSong);
+      }
+    } catch (err) {
+      console.warn("Modern directory picker fallback:", err);
+      hiddenFolderInput.click();
+    }
+  }
+
+  async function scanDirectoryHandle(dirHandle, path = "") {
+    for await (const entry of dirHandle.values()) {
+      if (entry.kind === 'file') {
+        const name = entry.name.toLowerCase();
+        if (name.endsWith('.mp3') || name.endsWith('.m4a') || name.endsWith('.flac') || name.endsWith('.wav')) {
+          state.localFileMap.set(name, entry);
+        }
+      } else if (entry.kind === 'directory') {
+        await scanDirectoryHandle(entry, `${path}${entry.name}/`);
+      }
+    }
+  }
+
+  function loadFilesFromList(fileList) {
+    if (!fileList || fileList.length === 0) return;
+    state.localFileMap.clear();
+
+    for (let i = 0; i < fileList.length; i++) {
+      const file = fileList[i];
+      const name = file.name.toLowerCase();
+      if (name.endsWith('.mp3') || name.endsWith('.m4a') || name.endsWith('.flac') || name.endsWith('.wav')) {
+        state.localFileMap.set(name, file);
+      }
+    }
+
+    const count = state.localFileMap.size;
+    localStatus.textContent = `Loaded ${count} audio files successfully!`;
+    localStatus.style.color = '#50e37b';
+    sourceLabel.textContent = `Loaded (${count})`;
+    sourceModal.classList.remove('open');
+
+    if (state.currentSong) {
+      playSong(state.currentSong);
+    } else if (state.filteredList.length > 0) {
+      playSong(state.filteredList[0]);
+    }
+  }
+
+  function showAudioSourcePrompt() {
+    sourceModal.classList.add('open');
+    localStatus.innerHTML = `<span style="color:#ff6b6b; font-weight:bold;">⚠️ Audio link required: Please click "Link Carvaan Folder" below and select your <code>I:\\carvaan</code> folder (or phone Music folder).</span>`;
   }
 
   // FILTERING LOGIC
   function applyFilters() {
     let list = [...state.catalog];
 
-    // Filter by Mode
     if (state.currentMode === 'geetmala') {
       list = list.filter(s => s.category === 'Geetmala' && !s.isInterview);
     } else if (state.currentMode === 'interviews') {
@@ -201,12 +278,10 @@
       list = list.filter(s => state.favorites.includes(s.id));
     }
 
-    // Filter by Artist Chip
     if (state.currentArtist !== 'ALL') {
       list = list.filter(s => s.artist.toLowerCase().includes(state.currentArtist.toLowerCase()));
     }
 
-    // Filter by Search Query
     if (state.searchQuery) {
       list = list.filter(s => 
         s.title.toLowerCase().includes(state.searchQuery) ||
@@ -220,7 +295,7 @@
     renderSongList();
   }
 
-  // RENDER SONG LIST (Virtual sliced for 5000+ speed)
+  // RENDER SONG LIST
   function renderSongList() {
     songListEl.innerHTML = '';
     
@@ -230,7 +305,6 @@
     }
 
     const fragment = document.createDocumentFragment();
-    // Render top 150 matching tracks at once for performance
     const renderLimit = Math.min(state.filteredList.length, 150);
 
     for (let i = 0; i < renderLimit; i++) {
@@ -283,24 +357,39 @@
     document.querySelectorAll('.song-item').forEach(el => el.classList.remove('active'));
     renderSongList();
 
-    // Resolve Audio Source
-    let audioUrl = null;
+    let audioSrc = null;
+    const cleanFileName = (song.filename || "").toLowerCase();
 
-    if (state.sourceType === 'cloud' && state.cloudBaseUrl) {
-      audioUrl = `${state.cloudBaseUrl}/audio/${encodeURIComponent(song.relPath)}`;
-    } else if (state.localFileMap.has(song.filename.toLowerCase())) {
-      const file = state.localFileMap.get(song.filename.toLowerCase());
-      audioUrl = URL.createObjectURL(file);
-    } else {
-      // Default to direct local server relative path
-      audioUrl = `audio/${encodeURIComponent(song.relPath)}`;
+    // 1. Check in-memory local file map
+    if (state.localFileMap.has(cleanFileName)) {
+      const fileOrHandle = state.localFileMap.get(cleanFileName);
+      if (fileOrHandle instanceof File) {
+        audioSrc = URL.createObjectURL(fileOrHandle);
+      } else if (fileOrHandle.getFile) {
+        const file = await fileOrHandle.getFile();
+        audioSrc = URL.createObjectURL(file);
+      }
+    } 
+    // 2. Check Cloud URL if configured
+    else if (state.cloudBaseUrl) {
+      audioSrc = `${state.cloudBaseUrl}/audio/${encodeURIComponent(song.relPath)}`;
+    } 
+    // 3. Check Local Web Server (when running python server.py)
+    else if (window.location.protocol.startsWith('http')) {
+      audioSrc = `audio/${encodeURIComponent(song.relPath)}`;
     }
 
-    audio.src = audioUrl;
+    if (!audioSrc) {
+      showAudioSourcePrompt();
+      fetchAndDisplayLyrics(song);
+      return;
+    }
+
+    audio.src = audioSrc;
     try {
       await audio.play();
     } catch (e) {
-      console.log("Auto-play prevented or source waiting user action:", e);
+      console.log("Playback start note:", e);
     }
 
     // Load Synced Lyrics
@@ -313,7 +402,7 @@
       return;
     }
     if (audio.paused) {
-      audio.play();
+      audio.play().catch(() => showAudioSourcePrompt());
     } else {
       audio.pause();
     }
@@ -381,9 +470,8 @@
     lyricsContainer.innerHTML = `<div class="lyrics-placeholder"><i class="fa-solid fa-spinner fa-spin"></i><p>Synchronizing lyrics for "${song.title}"...</p></div>`;
 
     try {
-      // 1. Try public LRCLIB synced lyrics API
       const cleanTitle = song.title.replace(/[_\d\-]/g, ' ').trim();
-      const cleanArtist = song.artist.replace(/Ameen Sayani|Various Artists/g, '').trim();
+      const cleanArtist = song.artist.replace(/Ameen Sayani|Various Artists|ft\..*/g, '').trim();
       
       const query = encodeURIComponent(`${cleanTitle} ${cleanArtist}`);
       const res = await fetch(`https://lrclib.net/api/search?q=${query}`);
@@ -402,7 +490,7 @@
     lyricsContainer.innerHTML = `
       <div class="lyrics-line active">🎵 ${song.title}</div>
       <div class="lyrics-line">🎙️ Artist: ${song.artist}</div>
-      <div class="lyrics-line">📻 Collection: Saregama Carvaan</div>
+      <div class="lyrics-line">📻 Saregama Carvaan Vintage Collection</div>
     `;
   }
 
@@ -437,7 +525,6 @@
       lineEl.id = `lyric-${index}`;
       lineEl.textContent = l.text;
       
-      // Tap to jump audio to that exact moment
       lineEl.addEventListener('click', () => {
         audio.currentTime = l.time;
       });
@@ -457,7 +544,6 @@
     }
   }
 
-  // FAVORITES
   function toggleFavorite(id, btn) {
     const idx = state.favorites.indexOf(id);
     if (idx > -1) {
@@ -476,14 +562,13 @@
     const modeNames = {
       'all': 'ALL 5000 SONGS',
       'artists': 'ARTIST SPECIAL',
-      'geetmala': 'BINAACA GEETMALA',
+      'geetmala': 'BINACA GEETMALA',
       'interviews': 'AMEEN SAYANI INTERVIEWS',
       'favorites': 'MY FAVORITES'
     };
     modeBadgeEl.innerHTML = `<i class="fa-solid fa-radio"></i> ${modeNames[state.currentMode] || 'CARVAAN'}`;
   }
 
-  // MEDIA SESSION API (Android Lock Screen Controls)
   function setupMediaSession() {
     if ('mediaSession' in navigator) {
       navigator.mediaSession.setActionHandler('play', () => audio.play());
@@ -493,6 +578,5 @@
     }
   }
 
-  // START
   init();
 })();
