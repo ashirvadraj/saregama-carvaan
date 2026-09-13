@@ -1,4 +1,8 @@
-﻿*.pyc
+﻿node_modules/
+android/.gradle/
+android/app/build/
+android/build/
+*.pyc
 __pycache__/
 .DS_Store
 Thumbs.db
