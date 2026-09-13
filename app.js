@@ -372,7 +372,8 @@
     } 
     // 2. Check Cloud URL if configured
     else if (state.cloudBaseUrl) {
-      audioSrc = `${state.cloudBaseUrl}/audio/${encodeURIComponent(song.relPath)}`;
+      const parts = (song.relPath || '').split('/').map(p => encodeURIComponent(p));
+      audioSrc = `${state.cloudBaseUrl.replace(/\/+$/, '')}/${parts.join('/')}`;
     } 
     // 3. Check Local Web Server (when running python server.py)
     else if (window.location.protocol.startsWith('http')) {
