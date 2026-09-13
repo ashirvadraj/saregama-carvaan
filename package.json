@@ -1,0 +1,17 @@
+{
+  "name": "saregama-carvaan-app",
+  "version": "1.0.0",
+  "description": "A standalone, vintage-styled mobile music player application engineered for the classic **Saregama Carvaan 5,000+ Songs collection**, featuring **Ameen Sayani's Binaca Geetmala**, Artist specials, real-time synchronized scrolling lyrics (Karaoke mode), and dual local/cloud streaming audio engines.",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@capacitor/android": "^8.5.2",
+    "@capacitor/cli": "^6.2.2",
+    "@capacitor/core": "^8.5.2"
+  }
+}
