@@ -78,7 +78,88 @@ export const HomeView: React.FC<HomeViewProps> = ({
         return isYearEnd ? <WrappedBanner onOpenWrapped={onOpenWrapped} periodType="yearly" /> : null;
       })()}
 
-      {/* 2. Mood & Ras Curated Categories */}
+      {/* 2. Ameen Sayani Geetmala & Interviews Special Feature */}
+      <section className="space-y-3">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 rounded-xl bg-amber-500/20 border border-amber-400/40 flex items-center justify-center text-amber-300 flex-shrink-0 shadow-md">
+              <Radio className="w-4 h-4" />
+            </div>
+            <div>
+              <h3 className="font-serif font-bold text-sm sm:text-base text-retro-cream leading-tight">
+                अमीन सयानी: बिनाका गीतमाला एवं इंटरव्यू
+              </h3>
+              <p className="text-[10px] text-retro-gold/80">
+                650+ ऐतिहासिक काउंटडाउन, कमेंट्री एवं दिग्गज कलाकारों के इंटरव्यू
+              </p>
+            </div>
+          </div>
+
+          <button
+            onClick={() => {
+              const geetmalaTracks = carvaanSongs.filter((s) => s.decade === 'geetmala' || s.artist.toLowerCase().includes('sayani') || s.title.toLowerCase().includes('commentary'));
+              if (geetmalaTracks.length > 0) {
+                const randomG = geetmalaTracks[Math.floor(Math.random() * geetmalaTracks.length)];
+                playSong(randomG, geetmalaTracks);
+              }
+            }}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-amber-400 hover:bg-amber-300 text-black text-xs font-bold shadow-md active:scale-95 transition-all flex-shrink-0"
+            title="Play Geetmala Radio"
+          >
+            <Play className="w-3.5 h-3.5 fill-black" />
+            <span>गीतमाला रेडियो</span>
+          </button>
+        </div>
+
+        {/* Featured Geetmala & Interview Cards */}
+        <div className="grid grid-cols-2 gap-2.5">
+          <div
+            onClick={() => {
+              const interviewTracks = carvaanSongs.filter((s) =>
+                s.title.toLowerCase().includes('commentary') ||
+                s.title.toLowerCase().includes('interview') ||
+                s.movie.toLowerCase().includes('commentary')
+              );
+              const pool = interviewTracks.length > 0 ? interviewTracks : carvaanSongs;
+              playSong(pool[0], pool);
+            }}
+            className="cursor-pointer rounded-2xl p-3.5 bg-gradient-to-br from-[#3b151e] to-[#1d070e] border border-amber-500/30 hover:border-amber-400/60 transition-all shadow-lg flex flex-col justify-between group"
+          >
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-xl">🎙️</span>
+              <span className="text-[9px] px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 font-mono font-bold">580+ ऑडियो</span>
+            </div>
+            <div>
+              <h4 className="font-serif font-bold text-xs text-white group-hover:text-retro-gold transition-colors">
+                इंटरव्यू व फ्लैशबैक कमेंट्री
+              </h4>
+              <p className="text-[10px] text-white/50 mt-0.5">
+                लता, रफ़ी, किशोर व मुकेश के दुर्लभ संस्मरण
+              </p>
+            </div>
+          </div>
+
+          <div
+            onClick={() => onSelectDecade('geetmala')}
+            className="cursor-pointer rounded-2xl p-3.5 bg-gradient-to-br from-[#2f1b47] to-[#120822] border border-retro-gold/30 hover:border-retro-gold/60 transition-all shadow-lg flex flex-col justify-between group"
+          >
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-xl">📻</span>
+              <span className="text-[9px] px-1.5 py-0.5 rounded bg-retro-gold/20 text-retro-gold font-mono font-bold">1952-1994</span>
+            </div>
+            <div>
+              <h4 className="font-serif font-bold text-xs text-white group-hover:text-retro-gold transition-colors">
+                बिनाका वार्षिक गीतमाला
+              </h4>
+              <p className="text-[10px] text-white/50 mt-0.5">
+                वर्ष-दर-वर्ष शीर्ष 1 पायदान के सरताज नग़मे
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 3. Carvaan Special Curated Collections */}
       <section className="space-y-2.5">
         <div className="flex items-center gap-2">
           <div className="w-8 h-8 rounded-xl bg-retro-gold/15 border border-retro-gold/30 flex items-center justify-center text-retro-gold flex-shrink-0">
@@ -86,82 +167,94 @@ export const HomeView: React.FC<HomeViewProps> = ({
           </div>
           <div>
             <h3 className="font-serif font-bold text-sm sm:text-base text-retro-cream leading-tight">
-              मूड और भाव (Mood Playlists)
+              कारवां विशेष संग्रह (Carvaan Specials)
             </h3>
-            <p className="text-[10px] text-white/50">आपके हर एहसास के लिए ख़ास धुनें</p>
+            <p className="text-[10px] text-white/50">5,000 गीतों के ख़ज़ाने से चुनिंदा श्रेणियां</p>
           </div>
         </div>
 
         <div className="flex gap-2.5 overflow-x-auto pb-1 scrollbar-none snap-x snap-mandatory">
           {[
             {
-              id: 'geetmala',
-              title: 'बिनाका गीतमाला',
-              sub: 'Ameen Sayani Flashback',
-              emoji: '📻',
-              bg: 'from-amber-900/80 to-yellow-950/80',
-              border: 'border-amber-500/30',
-              keywords: ['commentary', 'interview', 'geetmala', 'ameen', 'sayani'],
+              id: 'duets',
+              title: 'सदाबहार युगल गीत',
+              sub: 'Immortal Duets',
+              emoji: '👫',
+              bg: 'from-rose-950/80 to-amber-950/80',
+              border: 'border-rose-500/30',
+              filter: (s: Song) => s.artists && s.artists.length > 1,
             },
             {
               id: 'romantic',
-              title: 'प्यार के नग़मे',
+              title: 'प्यार के तराने',
               sub: 'Golden Romance',
               emoji: '❤️',
-              bg: 'from-rose-900/80 to-amber-950/80',
-              border: 'border-rose-500/30',
-              keywords: ['pyaar', 'dil', 'ishq', 'mohabbat', 'sanam', 'deewana', 'tum', 'chand'],
-            },
-            {
-              id: 'sad',
-              title: 'दर्द भरे गीत',
-              sub: 'Soulful & Melancholy',
-              emoji: '💔',
-              bg: 'from-indigo-950/80 to-slate-900/80',
-              border: 'border-indigo-500/30',
-              keywords: ['dard', 'gham', 'juda', 'aansoo', 'kismat', 'bewafa', 'tanhai', 'roye'],
-            },
-            {
-              id: 'monsoon',
-              title: 'बरखा ऋतू',
-              sub: 'Monsoon & Rain Classics',
-              emoji: '🌧️',
-              bg: 'from-cyan-950/80 to-blue-950/80',
-              border: 'border-cyan-500/30',
-              keywords: ['rimjhim', 'barish', 'sawan', 'badal', 'megha', 'barse', 'boond'],
+              bg: 'from-red-950/80 to-pink-950/80',
+              border: 'border-red-500/30',
+              filter: (s: Song) => {
+                const txt = `${s.title} ${s.movie || ''}`.toLowerCase();
+                return ['pyaar', 'dil', 'ishq', 'mohabbat', 'sanam', 'deewana', 'chand', 'humsafar', 'nazar'].some((k) => txt.includes(k));
+              },
             },
             {
               id: 'ghazal',
               title: 'शाम-ए-ग़ज़ल',
-              sub: 'Jagjit & Ghazals',
+              sub: 'Jagjit & Soulful Nazms',
               emoji: '☕',
               bg: 'from-amber-950/80 to-orange-950/80',
               border: 'border-amber-500/30',
-              keywords: ['ghazal', 'jagjit', 'mehdi', 'chitra', 'hothon', 'baat', 'shaam', 'nazar'],
+              filter: (s: Song) => {
+                const txt = `${s.title} ${s.artist} ${s.movie || ''}`.toLowerCase();
+                return ['ghazal', 'jagjit', 'chitra', 'mehdi', 'ghulam', 'hothon', 'baat', 'shaam'].some((k) => txt.includes(k));
+              },
+            },
+            {
+              id: 'sad',
+              title: 'दर्द भरी दास्तां',
+              sub: 'Soulful & Melancholy',
+              emoji: '💔',
+              bg: 'from-indigo-950/80 to-slate-900/80',
+              border: 'border-indigo-500/30',
+              filter: (s: Song) => {
+                const txt = `${s.title} ${s.movie || ''}`.toLowerCase();
+                return ['dard', 'gham', 'juda', 'aansoo', 'kismat', 'bewafa', 'tanhai', 'yaad', 'roye'].some((k) => txt.includes(k));
+              },
             },
             {
               id: 'masti',
-              title: 'मस्ती और उमंग',
-              sub: 'Retro Dance & Beats',
+              title: 'रेट्रो मस्ती व जश्न',
+              sub: 'Retro Beats & Energy',
               emoji: '🕺',
               bg: 'from-emerald-950/80 to-teal-950/80',
               border: 'border-emerald-500/30',
-              keywords: ['disco', 'masti', 'qawwali', 'dosti', 'dum', 'pardesiya', 'sholay'],
+              filter: (s: Song) => {
+                const txt = `${s.title} ${s.artist} ${s.movie || ''}`.toLowerCase();
+                return ['masti', 'disco', 'dosti', 'dum', 'hungama', 'qawwali', 'jashn', 'sholay'].some((k) => txt.includes(k));
+              },
+            },
+            {
+              id: 'bhajan',
+              title: 'भक्ति एवं प्रार्थना',
+              sub: 'Devotional Classics',
+              emoji: '🪔',
+              bg: 'from-yellow-950/80 to-amber-900/80',
+              border: 'border-yellow-500/30',
+              filter: (s: Song) => {
+                const txt = `${s.title} ${s.movie || ''}`.toLowerCase();
+                return ['stuti', 'bhajan', 'ram', 'krishna', 'shri', 'om', 'ganesh', 'vandanam', 'aarti', 'prarthana'].some((k) => txt.includes(k));
+              },
             },
           ].map((m) => {
             return (
               <div
                 key={m.id}
                 onClick={() => {
-                  const moodTracks = carvaanSongs.filter((s) => {
-                    const txt = `${s.title} ${s.artist} ${s.movie || ''}`.toLowerCase();
-                    return m.keywords.some((k) => txt.includes(k));
-                  });
-                  const pool = moodTracks.length > 0 ? moodTracks : carvaanSongs;
+                  const matched = carvaanSongs.filter(m.filter);
+                  const pool = matched.length > 0 ? matched : carvaanSongs;
                   const firstTrack = pool[Math.floor(Math.random() * pool.length)];
                   playSong(firstTrack, pool);
                 }}
-                className={`w-[130px] flex-shrink-0 snap-start cursor-pointer rounded-2xl p-3 bg-gradient-to-br ${m.bg} border ${m.border} hover:scale-105 active:scale-95 transition-all shadow-lg flex flex-col justify-between`}
+                className={`w-[135px] flex-shrink-0 snap-start cursor-pointer rounded-2xl p-3 bg-gradient-to-br ${m.bg} border ${m.border} hover:scale-105 active:scale-95 transition-all shadow-lg flex flex-col justify-between`}
               >
                 <div className="text-2xl mb-2">{m.emoji}</div>
                 <div>

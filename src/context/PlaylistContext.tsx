@@ -27,23 +27,13 @@ interface PlaylistContextType {
 const PlaylistContext = createContext<PlaylistContextType | undefined>(undefined);
 
 const STORAGE_KEYS = {
-  LIKED: 'carvaan_liked',
-  LIKED_MAP: 'carvaan_liked_map_v2',
-  PLAYLISTS: 'carvaan_playlists',
-  RECENT: 'carvaan_recent',
+  LIKED: 'carvaan_liked_v3',
+  LIKED_MAP: 'carvaan_liked_map_v3',
+  PLAYLISTS: 'carvaan_playlists_v3',
+  RECENT: 'carvaan_recent_v3',
 };
 
-const DEFAULT_PLAYLISTS: Playlist[] = [
-  {
-    id: 'pl-golden-duets',
-    name: 'Evergreen Golden Duets',
-    description: 'Immortal romantic dialogues between Lata, Kishore, Rafi, and Hemant Kumar.',
-    coverUrl: 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=600&auto=format&fit=crop&q=80',
-    songIds: ['sg-PNHIkJPr', 'sg-U3wEEo6F'],
-    isCustom: false,
-    createdAt: Date.now() - 1000000,
-  }
-];
+const DEFAULT_PLAYLISTS: Playlist[] = [];
 
 export const PlaylistProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { user, syncNow } = useAuth();
@@ -190,21 +180,19 @@ export const PlaylistProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     return { success: false, count: 0 };
   };
 
-  // On App Launch: ALWAYS try to merge native persistent backup with what is in localStorage.
-  // This ensures even returning users get their full song history merged back.
+  // On App Launch: Do not auto-fetch from cloud for anonymous users so library starts clean (0 liked, 0 playlists)
   useEffect(() => {
-    const mergeNativeBackupOnLaunch = async () => {
-      setIsRestoring(true); // Block sync (as state, so useEffect re-runs when it becomes false)
-      try {
-        await restoreFromCloud(user?.email);
-      } catch {}
+    const initUserData = async () => {
+      if (user?.email && user.email !== 'default' && user.email !== 'local_user@carvaan.app') {
+        setIsRestoring(true);
+        try {
+          await restoreFromCloud(user.email);
+        } catch {}
+      }
       hasInitialRestoreAttempted.current = true;
-      // Give React 1 second for state updates to settle, then unblock sync
-      setTimeout(() => {
-        setIsRestoring(false); // This triggers sync useEffect to re-run with merged state!
-      }, 1000);
+      setIsRestoring(false);
     };
-    mergeNativeBackupOnLaunch();
+    initUserData();
   }, [user]);
 
   // Listen to song playback across the entire app and cache song objects
