@@ -1,6 +1,5 @@
-import os
+﻿import os
 import sys
-import json
 import time
 from pathlib import Path
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -12,8 +11,6 @@ SECRET_KEY = 'Vp6NZ6ZD5IkKGzwS'
 IDENTIFIER = 'saregama-carvaan-5000-songs-collection'
 CARVAAN_DIR = r'I:\carvaan'
 MAX_WORKERS = 4
-
-session = ia.get_session(config={'s3': {'access': ACCESS_KEY, 'secret': SECRET_KEY}})
 
 item_metadata = {
     'collection': 'opensource_audio',
@@ -37,10 +34,12 @@ def scan_files():
 def upload_single_file(file_tuple):
     full_path, rel_path = file_tuple
     try:
-        session.upload(
+        ia.upload(
             IDENTIFIER,
             files={rel_path: full_path},
             metadata=item_metadata,
+            access_key=ACCESS_KEY,
+            secret_key=SECRET_KEY,
             verbose=False,
             queue_derive=False,
             verify=False
@@ -50,13 +49,12 @@ def upload_single_file(file_tuple):
         return False, (rel_path, str(e))
 
 def main():
-    print('Scanning Carvaan files from ' + CARVAAN_DIR + '...')
+    print(f"Scanning Carvaan files from {CARVAAN_DIR}...")
     files = scan_files()
     total = len(files)
-    print(f'Total files found: {total}')
-
-    print(f'Starting upload to Archive.org under item: {IDENTIFIER}')
-    print(f'Direct Cloud Streaming Base URL: https://archive.org/download/{IDENTIFIER}/')
+    print(f"Total files found: {total}")
+    print(f"Uploading to Archive.org item: {IDENTIFIER} ({MAX_WORKERS} concurrent threads)...")
+    print(f"Streaming Base URL: https://archive.org/download/{IDENTIFIER}/")
 
     uploaded = 0
     failed = []
@@ -72,9 +70,9 @@ def main():
                     failed.append(result)
                 pbar.update(1)
 
-    print(f'Upload completed! Successfully uploaded: {uploaded}/{total}')
+    print(f"Upload complete! Successfully uploaded {uploaded}/{total} files.")
     if failed:
-        print(f'Failed: {len(failed)} files.')
+        print(f"{len(failed)} files failed. You can re-run to retry remaining files.")
 
 if __name__ == '__main__':
     main()
