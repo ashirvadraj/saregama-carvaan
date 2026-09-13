@@ -151,7 +151,7 @@ export const ArtistsView: React.FC<ArtistsViewProps> = ({
             </div>
 
             {artistSongs.length === 0 ? (
-              <div className="p-8 rounded-2xl bg-[#18112b]/60 border border-white/5 text-center text-xs text-white/50 space-y-1">
+              <div className="p-8 rounded-2xl bg-[#1C0810]/60 border border-white/5 text-center text-xs text-white/50 space-y-1">
                 <p>इस कलाकार के गीत खोजे जा रहे हैं...</p>
               </div>
             ) : (
@@ -182,7 +182,7 @@ export const ArtistsView: React.FC<ArtistsViewProps> = ({
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="गायक का नाम खोजें (Search singer name)..."
-              className="w-full pl-10 pr-4 py-2.5 rounded-2xl bg-[#18112b] border border-retro-gold/20 text-retro-cream placeholder-white/40 text-xs focus:outline-none focus:border-retro-gold transition-all"
+              className="w-full pl-10 pr-4 py-2.5 rounded-2xl bg-[#1C0810] border border-retro-gold/20 text-retro-cream placeholder-white/40 text-xs focus:outline-none focus:border-retro-gold transition-all"
             />
           </div>
 
@@ -201,7 +201,7 @@ export const ArtistsView: React.FC<ArtistsViewProps> = ({
               <button
                 key={artist.id}
                 onClick={() => onSelectArtist(artist)}
-                className="group relative overflow-hidden rounded-2xl p-3.5 bg-[#18112b] border border-white/10 hover:border-retro-gold/40 transition-all text-left flex flex-col items-center text-center space-y-2.5 shadow-md hover:scale-[1.02] active:scale-98"
+                className="group relative overflow-hidden rounded-2xl p-3.5 bg-[#1C0810] border border-white/10 hover:border-retro-gold/40 transition-all text-left flex flex-col items-center text-center space-y-2.5 shadow-md hover:scale-[1.02] active:scale-98"
               >
                 <div className="relative w-20 h-20 rounded-full overflow-hidden p-0.5 bg-gradient-to-tr from-retro-gold via-amber-400 to-purple-600 shadow-lg">
                   <img

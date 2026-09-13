@@ -231,7 +231,7 @@ export const MainApp: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#0c0817] text-[#FFF4E0] flex flex-col antialiased select-none font-sans relative">
+    <div className="min-h-screen bg-[#0D0407] text-[#FFF4E0] flex flex-col antialiased select-none font-sans relative">
       {/* Header with Account Button */}
       <Header
         onOpenSleepTimer={() => setIsSleepTimerOpen(true)}
@@ -318,7 +318,7 @@ export const MainApp: React.FC = () => {
       {/* Double Back Press Exit Toast (Auto-dismisses in 4 seconds) */}
       {showExitToast && (
         <div className="fixed bottom-24 left-1/2 -translate-x-1/2 z-50 pointer-events-none animate-fade-in">
-          <div className="px-4 py-2 rounded-full bg-[#1e1338]/95 border border-retro-gold/40 text-retro-cream text-xs font-semibold shadow-2xl flex items-center gap-2 backdrop-blur-md">
+          <div className="px-4 py-2 rounded-full bg-[#240A15]/95 border border-retro-gold/40 text-retro-cream text-xs font-semibold shadow-2xl flex items-center gap-2 backdrop-blur-md">
             <Disc3 className="w-4 h-4 text-retro-gold animate-spin-slow" />
             <span>ऐप से बाहर निकलने के लिए दोबारा वापस दबाएं (Press back again to exit)</span>
           </div>

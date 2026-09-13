@@ -15,7 +15,7 @@ export const MiniPlayer: React.FC = () => {
   return (
     <div
       onClick={() => setIsFullPlayerOpen(true)}
-      className="fixed bottom-[65px] left-2 right-2 z-30 bg-[#160e28] rounded-2xl border-2 border-retro-gold/40 shadow-2xl shadow-black p-2.5 flex items-center justify-between cursor-pointer transition-all hover:border-retro-gold/70"
+      className="fixed bottom-[65px] left-2 right-2 z-30 bg-[#1C0810] rounded-2xl border-2 border-retro-gold/40 shadow-2xl shadow-black p-2.5 flex items-center justify-between cursor-pointer transition-all hover:border-retro-gold/70"
       style={{ opacity: 1 }}
     >
       {/* Mini Progress Bar Line */}
@@ -28,7 +28,7 @@ export const MiniPlayer: React.FC = () => {
 
       {/* Song Info */}
       <div className="flex items-center gap-3 min-w-0 flex-1 pr-2">
-        <div className="relative w-11 h-11 rounded-lg overflow-hidden flex-shrink-0 border border-retro-gold/30 shadow-md bg-[#23153d]">
+        <div className="relative w-11 h-11 rounded-lg overflow-hidden flex-shrink-0 border border-retro-gold/30 shadow-md bg-[#2B0A17]">
           <img
             src={currentSong.coverUrl}
             alt={currentSong.title}

@@ -67,7 +67,7 @@ export const AccountModal: React.FC<AccountModalProps> = ({ isOpen, onClose }) =
 
   return (
     <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/85 backdrop-blur-md animate-fade-in">
-      <div className="relative w-full max-w-md bg-[#18112b] text-retro-cream rounded-t-3xl sm:rounded-3xl border border-retro-gold/40 shadow-2xl overflow-hidden max-h-[90vh] flex flex-col animate-slide-up">
+      <div className="relative w-full max-w-md bg-[#1C0810] text-retro-cream rounded-t-3xl sm:rounded-3xl border border-retro-gold/40 shadow-2xl overflow-hidden max-h-[90vh] flex flex-col animate-slide-up">
         {/* Header */}
         <div className="px-5 py-4 flex items-center justify-between border-b border-white/10 flex-shrink-0">
           <div className="flex items-center gap-2.5">
@@ -120,7 +120,7 @@ export const AccountModal: React.FC<AccountModalProps> = ({ isOpen, onClose }) =
             /* SECTION 4: AUTHENTICATED USER PROFILE */
             <div className="space-y-5 animate-fade-in">
               {/* Profile Card */}
-              <div className="p-4 rounded-3xl bg-[#23153d] border border-retro-gold/40 flex items-center justify-between shadow-xl">
+              <div className="p-4 rounded-3xl bg-[#2B0A17] border border-retro-gold/40 flex items-center justify-between shadow-xl">
                 <div className="flex items-center gap-3.5 min-w-0 flex-1">
                   {user.picture ? (
                     <img

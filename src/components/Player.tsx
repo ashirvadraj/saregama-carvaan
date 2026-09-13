@@ -157,7 +157,7 @@ export const Player: React.FC<PlayerProps> = ({ onOpenSleepTimer }) => {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex flex-col justify-between overflow-hidden animate-fade-in p-5 bg-gradient-to-b from-[#1b1033] via-[#0e071e] to-[#06030c]">
+    <div className="fixed inset-0 z-50 flex flex-col justify-between overflow-hidden animate-fade-in p-5 bg-gradient-to-b from-[#2D0916] via-[#0D0407] to-[#080204]">
       {/* Background Ambient Glow */}
       <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-retro-gold/10 rounded-full blur-3xl pointer-events-none" />
 
@@ -257,7 +257,7 @@ export const Player: React.FC<PlayerProps> = ({ onOpenSleepTimer }) => {
             <div className="flex items-center gap-2">
               <Music2 className="w-4 h-4 text-retro-gold" />
               <span className="text-xs font-bold text-retro-cream">
-                {lyricsData?.isSynced ? '? Lyrics RecordLyricsLyrics Lyrics (Synced)' : ' Lyrics  Lyrics (Static Lyrics)'}
+                {lyricsData?.isSynced ? 'तालमेल बोल (Synced Lyrics)' : 'गीत के बोल (Lyrics)'}
               </span>
             </div>
 
@@ -291,7 +291,7 @@ export const Player: React.FC<PlayerProps> = ({ onOpenSleepTimer }) => {
               <div className="flex flex-col items-center justify-center h-full space-y-3 py-16">
                 <Loader2 className="w-8 h-8 text-retro-gold animate-spin" />
                 <p className="text-sm font-medium text-retro-cream/70 animate-pulse">
-                  Lyrics  Lyrics Lyrics  Lyrics Lyrics...
+                  गीत के बोल खोजे जा रहे हैं... (Fetching Lyrics)
                 </p>
               </div>
             ) : lyricsData && lyricsData.lines.length > 0 ? (
@@ -314,7 +314,7 @@ export const Player: React.FC<PlayerProps> = ({ onOpenSleepTimer }) => {
                     onClick={() => lyricsData.isSynced && handleLyricsLineClick(line.time)}
                     className={`cursor-pointer transition-all duration-300 py-1.5 px-3 rounded-2xl ${fontSizeClass} ${
                       isLineActive
-                        ? 'text-retro-gold scale-105 font-extrabold drop-shadow-[0_0_12px_rgba(229,169,60,0.6)] bg-retro-gold/10'
+                        ? 'text-retro-gold scale-105 font-extrabold drop-shadow-[0_0_12px_rgba(243,198,77,0.6)] bg-retro-gold/10'
                         : isLinePast
                         ? 'text-white/40 font-medium hover:text-white/70'
                         : 'text-white/60 font-medium hover:text-white/90'
@@ -352,7 +352,7 @@ export const Player: React.FC<PlayerProps> = ({ onOpenSleepTimer }) => {
             ) : (
               <div className="flex flex-col items-center justify-center h-full space-y-2 py-16 text-white/50">
                 <FileText className="w-8 h-8 text-retro-gold/40 mb-1" />
-                <p className="text-sm font-semibold"> Lyrics  Lyrics LyricsLyrics Lyrics? Lyrics</p>
+                <p className="text-sm font-semibold">गीत के बोल उपलब्ध नहीं हैं</p>
                 <p className="text-xs">No synchronized lyrics found</p>
               </div>
             )}
@@ -369,9 +369,9 @@ export const Player: React.FC<PlayerProps> = ({ onOpenSleepTimer }) => {
           <p className="text-xs sm:text-sm text-retro-gold/90 truncate font-medium">
             {currentSong.artist}
           </p>
-          <div className="flex items-center gap-2 text-[10px] text-white/50">
-            {currentSong.movie && <span> {currentSong.movie}</span>}
-            {currentSong.year && <span>?  {currentSong.year}</span>}
+          <div className="flex items-center gap-2 text-[11px] text-retro-muted">
+            {currentSong.movie && <span>🎬 {currentSong.movie}</span>}
+            {currentSong.year && <span>• {currentSong.year}</span>}
           </div>
         </div>
 

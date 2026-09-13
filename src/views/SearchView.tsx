@@ -210,7 +210,7 @@ export const SearchView: React.FC<SearchViewProps> = ({ onOpenCreatePlaylist, on
               if (e.key === 'Enter') handleSearchSubmit(query);
             }}
             placeholder="Search 5,000 Carvaan songs, singers, geetmala..."
-            className="w-full pl-11 pr-24 py-3.5 rounded-2xl bg-[#18112b] border border-retro-gold/30 text-retro-cream placeholder-white/40 text-sm focus:outline-none focus:border-retro-gold focus:ring-1 focus:ring-retro-gold transition-all shadow-inner"
+            className="w-full pl-11 pr-24 py-3.5 rounded-2xl bg-[#1C0810] border border-retro-gold/30 text-retro-cream placeholder-white/40 text-sm focus:outline-none focus:border-retro-gold focus:ring-1 focus:ring-retro-gold transition-all shadow-inner"
           />
           <div className="absolute inset-y-0 right-0 pr-2.5 flex items-center gap-1.5">
             {query && (
@@ -392,7 +392,7 @@ export const SearchView: React.FC<SearchViewProps> = ({ onOpenCreatePlaylist, on
                 )}
               </div>
             ) : (
-              <div className="text-center py-12 bg-[#160e28]/60 rounded-3xl border border-white/5 space-y-2">
+              <div className="text-center py-12 bg-[#1C0810]/60 rounded-3xl border border-white/5 space-y-2">
                 <Disc className="w-10 h-10 text-retro-gold/40 mx-auto" />
                 <h4 className="font-bold text-sm text-retro-cream">No tracks found</h4>
                 <p className="text-xs text-white/50 max-w-xs mx-auto">

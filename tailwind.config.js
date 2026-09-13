@@ -8,14 +8,16 @@ export default {
     extend: {
       colors: {
         retro: {
-          dark: '#0e0b16',
-          surface: '#18122B',
-          card: '#22194D',
-          gold: '#E5A93C',
-          amber: '#F39C12',
-          cream: '#FFF4E0',
-          muted: '#9B90B2',
-          accent: '#D97706'
+          dark: '#0D0407',
+          surface: '#1C0810',
+          card: '#2C0D1A',
+          cardHover: '#3D1224',
+          gold: '#F3C64D',
+          goldDark: '#C99E30',
+          amber: '#E07A22',
+          cream: '#FFF6EA',
+          muted: '#C49A9E',
+          accent: '#B82042'
         }
       },
       fontFamily: {

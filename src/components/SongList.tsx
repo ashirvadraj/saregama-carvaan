@@ -67,7 +67,7 @@ export const SongList: React.FC<SongListProps> = ({
               </div>
             )}
 
-            <div className="relative w-11 h-11 rounded-xl overflow-hidden bg-[#22163d] flex-shrink-0">
+            <div className="relative w-11 h-11 rounded-xl overflow-hidden bg-[#2C0D1A] flex-shrink-0">
               <img
                 src={song.coverUrl}
                 alt={song.title}

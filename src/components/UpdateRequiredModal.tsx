@@ -19,7 +19,7 @@ export const UpdateRequiredModal: React.FC<UpdateRequiredModalProps> = ({ config
       <div className="absolute w-72 h-72 rounded-full bg-retro-gold/15 blur-3xl pointer-events-none" />
       <div className="absolute w-96 h-96 rounded-full bg-amber-500/10 blur-3xl pointer-events-none -bottom-10" />
 
-      <div className="relative w-full max-w-sm bg-[#1b1033] border-2 border-retro-gold/40 rounded-3xl p-6 shadow-2xl shadow-black text-center flex flex-col items-center space-y-5">
+      <div className="relative w-full max-w-sm bg-[#2D0916] border-2 border-retro-gold/40 rounded-3xl p-6 shadow-2xl shadow-black text-center flex flex-col items-center space-y-5">
         {/* Animated App Disc Icon */}
         <div className="relative w-20 h-20 rounded-full bg-gradient-to-tr from-retro-gold via-amber-400 to-amber-600 p-1 flex items-center justify-center shadow-xl shadow-retro-gold/20">
           <div className="w-full h-full rounded-full bg-[#120a22] flex items-center justify-center">

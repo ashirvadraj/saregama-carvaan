@@ -133,7 +133,7 @@ export const LibraryView: React.FC<LibraryViewProps> = ({ onOpenCreatePlaylist, 
       )}
 
       {/* Tabs */}
-      <div className="grid grid-cols-4 gap-1 p-1 bg-[#18112b] rounded-2xl border border-white/10">
+      <div className="grid grid-cols-4 gap-1 p-1 bg-[#1C0810] rounded-2xl border border-white/10">
         <button
           onClick={() => {
             setActiveTab('favorites');
@@ -230,7 +230,7 @@ export const LibraryView: React.FC<LibraryViewProps> = ({ onOpenCreatePlaylist, 
           </div>
 
           {favorites.length === 0 ? (
-            <div className="text-center py-14 px-4 bg-[#18112b]/80 rounded-3xl border border-white/10 space-y-4">
+            <div className="text-center py-14 px-4 bg-[#1C0810]/80 rounded-3xl border border-white/10 space-y-4">
               <div className="w-14 h-14 rounded-full bg-retro-gold/10 border border-retro-gold/30 flex items-center justify-center mx-auto text-retro-gold">
                 <Heart className="w-7 h-7" />
               </div>
@@ -287,7 +287,7 @@ export const LibraryView: React.FC<LibraryViewProps> = ({ onOpenCreatePlaylist, 
               </div>
 
               {playlists.length === 0 ? (
-                <div className="text-center py-16 px-4 bg-[#18112b]/60 rounded-3xl border border-white/5 space-y-3">
+                <div className="text-center py-16 px-4 bg-[#1C0810]/60 rounded-3xl border border-white/5 space-y-3">
                   <ListMusic className="w-12 h-12 text-retro-gold/40 mx-auto" />
                   <h4 className="font-bold text-sm text-retro-cream">No Playlists Created</h4>
                   <p className="text-xs text-white/50 max-w-xs mx-auto">
@@ -300,7 +300,7 @@ export const LibraryView: React.FC<LibraryViewProps> = ({ onOpenCreatePlaylist, 
                     <button
                       key={pl.id}
                       onClick={() => setSelectedPlaylistId(pl.id)}
-                      className="p-4 rounded-2xl bg-[#18112b] border border-white/10 hover:border-retro-gold/40 transition-all text-left space-y-2 group shadow-md"
+                      className="p-4 rounded-2xl bg-[#1C0810] border border-white/10 hover:border-retro-gold/40 transition-all text-left space-y-2 group shadow-md"
                     >
                       <div className="w-12 h-12 rounded-xl bg-gradient-to-tr from-retro-gold/30 to-purple-600/30 flex items-center justify-center text-retro-gold group-hover:scale-105 transition-transform">
                         <Disc3 className="w-6 h-6" />
@@ -341,7 +341,7 @@ export const LibraryView: React.FC<LibraryViewProps> = ({ onOpenCreatePlaylist, 
                 )}
               </div>
 
-              <div className="p-4 rounded-2xl bg-gradient-to-r from-[#22133d] to-[#140b26] border border-retro-gold/30 flex items-center justify-between">
+              <div className="p-4 rounded-2xl bg-gradient-to-r from-[#2C0D1A] to-[#18060F] border border-retro-gold/30 flex items-center justify-between">
                 <div>
                   <h3 className="font-bold text-base text-retro-cream font-serif">
                     {selectedPlaylist.name}
@@ -362,7 +362,7 @@ export const LibraryView: React.FC<LibraryViewProps> = ({ onOpenCreatePlaylist, 
               </div>
 
               {playlistSongs.length === 0 ? (
-                <div className="text-center py-12 px-4 bg-[#18112b]/60 rounded-3xl border border-white/5 space-y-2">
+                <div className="text-center py-12 px-4 bg-[#1C0810]/60 rounded-3xl border border-white/5 space-y-2">
                   <Disc3 className="w-8 h-8 text-retro-gold/40 mx-auto" />
                   <p className="text-xs text-white/50">This playlist is currently empty.</p>
                 </div>
@@ -404,7 +404,7 @@ export const LibraryView: React.FC<LibraryViewProps> = ({ onOpenCreatePlaylist, 
           </div>
 
           {recentSongs.length === 0 ? (
-            <div className="text-center py-16 px-4 bg-[#18112b]/60 rounded-3xl border border-white/5 space-y-3">
+            <div className="text-center py-16 px-4 bg-[#1C0810]/60 rounded-3xl border border-white/5 space-y-3">
               <History className="w-12 h-12 text-retro-gold/40 mx-auto" />
               <h4 className="font-bold text-sm text-retro-cream">No Recent History</h4>
               <p className="text-xs text-white/50 max-w-xs mx-auto">
@@ -446,7 +446,7 @@ export const LibraryView: React.FC<LibraryViewProps> = ({ onOpenCreatePlaylist, 
           </div>
 
           {downloadedSongs.length === 0 ? (
-            <div className="text-center py-16 px-4 bg-[#18112b]/60 rounded-3xl border border-white/5 space-y-3">
+            <div className="text-center py-16 px-4 bg-[#1C0810]/60 rounded-3xl border border-white/5 space-y-3">
               <Download className="w-12 h-12 text-retro-gold/40 mx-auto" />
               <h4 className="font-bold text-sm text-retro-cream">No Offline Downloads</h4>
               <p className="text-xs text-white/50 max-w-xs mx-auto">

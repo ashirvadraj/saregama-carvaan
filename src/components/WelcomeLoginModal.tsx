@@ -35,7 +35,7 @@ export const WelcomeLoginModal: React.FC = () => {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90 backdrop-blur-md animate-fade-in">
-      <div className="relative w-full max-w-sm bg-gradient-to-b from-[#1e1236] via-[#140b26] to-[#0c0618] text-retro-cream rounded-3xl border border-retro-gold/40 shadow-2xl p-7 flex flex-col items-center text-center animate-slide-up">
+      <div className="relative w-full max-w-sm bg-gradient-to-b from-[#1e1236] via-[#18060F] to-[#0c0618] text-retro-cream rounded-3xl border border-retro-gold/40 shadow-2xl p-7 flex flex-col items-center text-center animate-slide-up">
         {/* App Logo */}
         <div className="w-18 h-18 rounded-2xl bg-gradient-to-tr from-retro-gold via-amber-400 to-amber-600 p-0.5 shadow-2xl shadow-retro-gold/20 mb-4 flex items-center justify-center">
           <div className="w-full h-full bg-[#120a22] rounded-[14px] flex items-center justify-center">

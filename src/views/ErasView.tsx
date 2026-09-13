@@ -51,7 +51,7 @@ export const ErasView: React.FC<ErasViewProps> = ({
       </div>
 
       {/* Era Hero Banner */}
-      <div className="relative overflow-hidden rounded-3xl p-5 bg-gradient-to-br from-[#2b1947] to-[#120a21] border border-retro-gold/30 shadow-xl">
+      <div className="relative overflow-hidden rounded-3xl p-5 bg-gradient-to-br from-[#330E1E] to-[#14050C] border border-retro-gold/30 shadow-xl">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div className="space-y-1">
             <span className="text-[11px] font-bold text-retro-gold uppercase tracking-wider font-mono">

@@ -67,7 +67,7 @@ export const SongItem: React.FC<SongItemProps> = ({
     >
       <div className="flex items-center gap-3 min-w-0 flex-1">
         {/* Track Cover & Play Overlay */}
-        <div className="relative w-12 h-12 rounded-xl overflow-hidden flex-shrink-0 bg-[#22163d] shadow-sm">
+        <div className="relative w-12 h-12 rounded-xl overflow-hidden flex-shrink-0 bg-[#2C0D1A] shadow-sm">
           <img
             src={song.coverUrl}
             alt={song.title}
@@ -189,7 +189,7 @@ export const SongItem: React.FC<SongItemProps> = ({
           {showMenu && (
             <div
               onClick={(e) => e.stopPropagation()}
-              className="absolute right-0 top-8 z-40 w-52 bg-[#1e1338] rounded-2xl p-2 shadow-2xl border border-retro-gold/30 text-xs space-y-1"
+              className="absolute right-0 top-8 z-40 w-52 bg-[#240A15] rounded-2xl p-2 shadow-2xl border border-retro-gold/30 text-xs space-y-1"
             >
               {onAddToPlaylistClick && (
                 <button

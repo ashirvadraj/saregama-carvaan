@@ -42,7 +42,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
   return (
     <div className="pb-48 pt-3 px-4 space-y-6 max-w-lg mx-auto animate-fade-in">
       {/* 1. Hero Radio Banner */}
-      <section className="relative overflow-hidden rounded-3xl p-6 bg-gradient-to-br from-[#2a1b4e] via-[#1a0f33] to-[#0c0817] border border-retro-gold/30 shadow-2xl">
+      <section className="relative overflow-hidden rounded-3xl p-6 bg-gradient-to-br from-[#3B0F23] via-[#240A15] to-[#0D0407] border border-retro-gold/30 shadow-2xl">
         <div className="absolute top-0 right-0 -mr-8 -mt-8 w-44 h-44 bg-retro-gold/10 rounded-full blur-3xl pointer-events-none" />
         <div className="relative z-10 flex items-center justify-between">
           <div className="space-y-2 max-w-[70%]">
@@ -141,7 +141,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
 
           <div
             onClick={() => onSelectDecade('geetmala')}
-            className="cursor-pointer rounded-2xl p-3.5 bg-gradient-to-br from-[#2f1b47] to-[#120822] border border-retro-gold/30 hover:border-retro-gold/60 transition-all shadow-lg flex flex-col justify-between group"
+            className="cursor-pointer rounded-2xl p-3.5 bg-gradient-to-br from-[#360B1B] to-[#120822] border border-retro-gold/30 hover:border-retro-gold/60 transition-all shadow-lg flex flex-col justify-between group"
           >
             <div className="flex items-center justify-between mb-2">
               <span className="text-xl">📻</span>
@@ -305,9 +305,9 @@ export const HomeView: React.FC<HomeViewProps> = ({
               <div
                 key={song.id}
                 onClick={() => playSong(song, randomSuggestions)}
-                className="w-[136px] flex-shrink-0 snap-start group cursor-pointer bg-[#18112b] rounded-2xl p-2.5 border border-white/10 hover:border-retro-gold/50 transition-all shadow-md flex flex-col justify-between"
+                className="w-[136px] flex-shrink-0 snap-start group cursor-pointer bg-[#1C0810] rounded-2xl p-2.5 border border-white/10 hover:border-retro-gold/50 transition-all shadow-md flex flex-col justify-between"
               >
-                <div className="relative w-full aspect-square rounded-xl overflow-hidden mb-2 bg-[#22163d]">
+                <div className="relative w-full aspect-square rounded-xl overflow-hidden mb-2 bg-[#2C0D1A]">
                   <img
                     src={song.coverUrl}
                     alt={song.title}
@@ -396,7 +396,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
             <button
               key={decade.id}
               onClick={() => onSelectDecade(decade.id)}
-              className="group relative overflow-hidden rounded-2xl p-4 text-left border border-white/10 hover:border-retro-gold/40 transition-all bg-[#18112b] shadow-md flex flex-col justify-between min-h-[95px]"
+              className="group relative overflow-hidden rounded-2xl p-4 text-left border border-white/10 hover:border-retro-gold/40 transition-all bg-[#1C0810] shadow-md flex flex-col justify-between min-h-[95px]"
             >
               <div className="relative z-10 space-y-1">
                 <span className="text-[10px] font-bold text-retro-gold uppercase tracking-wider">
