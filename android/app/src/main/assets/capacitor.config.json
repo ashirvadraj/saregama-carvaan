@@ -1,7 +1,7 @@
 {
 	"appId": "com.saregama.carvaan",
 	"appName": "Saregama Carvaan",
-	"webDir": "www",
+	"webDir": "dist",
 	"bundledWebRuntime": false,
 	"server": {
 		"androidScheme": "https",

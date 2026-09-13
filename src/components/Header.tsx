@@ -25,14 +25,14 @@ export const Header: React.FC<HeaderProps> = ({ onOpenSleepTimer }) => {
         <div>
           <div className="flex items-center gap-1.5">
             <h1 className="font-bold text-lg tracking-wide text-[#FFF4E0] font-serif">
-              सुनहरे गीत
+              सारेगामा कारवां
             </h1>
             <span className="text-[9px] px-1.5 py-0.5 rounded bg-retro-gold/25 text-retro-gold font-bold uppercase tracking-wider border border-retro-gold/30">
               v{CURRENT_APP_VERSION.toFixed(1)}
             </span>
           </div>
           <p className="text-[11px] text-retro-gold/80 font-medium tracking-tight">
-            सदाबहार गीतों का अनूठा संगम
+            5,000 क्लासिक्स एवं गीतमाला संग्रह
           </p>
         </div>
       </div>

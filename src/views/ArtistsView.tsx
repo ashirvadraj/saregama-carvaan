@@ -59,57 +59,44 @@ export const ArtistsView: React.FC<ArtistsViewProps> = ({
     const artistId = selectedArtist.id.toLowerCase();
     const artistNameLower = selectedArtist.name.toLowerCase().trim();
 
+    if (artistId === 'ameen-sayani' || artistNameLower.includes('ameen')) {
+      return SONGS.filter((song) => {
+        const txt = `${song.title} ${song.artist} ${song.movie || ''}`.toLowerCase();
+        return (
+          txt.includes('ameen') ||
+          txt.includes('sayani') ||
+          txt.includes('commentary') ||
+          txt.includes('interview') ||
+          txt.includes('geetmala')
+        );
+      });
+    }
+
+    // Split artist first name / last name for robust matching (e.g. "Kishore", "Lata", "Rafi", "Mukesh", "Asha")
+    const nameParts = artistNameLower.split(' ').filter(p => p.length > 2);
+
     return SONGS.filter((song) => {
       // Direct artistId link
       if (song.artistId && song.artistId.toLowerCase() === artistId) {
         return true;
       }
 
-      // Strict name isolation for Indian artists
-      if (artistId === 'kk') {
-        return (
-          song.artistId === 'kk' ||
-          (song.artist.includes('KK') &&
-            !song.artist.includes('Kavita') &&
-            !song.artist.includes('Krishnamurthy'))
-        );
-      }
-
-      if (artistId === 'kavita-krishnamurthy') {
-        return (
-          song.artistId === 'kavita-krishnamurthy' ||
-          song.artist.includes('Kavita Krishnamurthy') ||
-          song.artist.includes('Kavita')
-        );
-      }
-
-      if (artistId === 'rahat-fateh-ali-khan') {
-        return (
-          song.artistId === 'rahat-fateh-ali-khan' ||
-          (song.artist.includes('Rahat') && !song.artist.includes('Nusrat Fateh'))
-        );
-      }
-
-      if (artistId === 'nusrat-fateh-ali-khan') {
-        return (
-          song.artistId === 'nusrat-fateh-ali-khan' ||
-          song.artist.includes('Nusrat')
-        );
-      }
-
-      if (artistId === 'sia') {
-        return (
-          song.artistId === 'sia' ||
-          song.artists?.some((a) => a.toLowerCase().trim() === 'sia')
-        );
-      }
-
-      // General matching
       if (song.artists && Array.isArray(song.artists)) {
-        return song.artists.some((a) => a.toLowerCase().trim() === artistNameLower || a.toLowerCase().includes(artistNameLower));
+        if (song.artists.some((a) => a.toLowerCase().trim() === artistNameLower || a.toLowerCase().includes(artistNameLower))) {
+          return true;
+        }
       }
 
-      return song.artist && song.artist.toLowerCase().includes(artistNameLower);
+      const songArtist = (song.artist || '').toLowerCase();
+      if (songArtist.includes(artistNameLower)) return true;
+
+      const songTitle = (song.title || '').toLowerCase();
+      // Check notable hits
+      if (selectedArtist.notableHits && selectedArtist.notableHits.some(h => songTitle.includes(h.toLowerCase()))) {
+        return true;
+      }
+
+      return nameParts.length > 0 && nameParts.every(p => songArtist.includes(p));
     });
   }, [selectedArtist]);
 

@@ -2,6 +2,22 @@ import { Artist } from '../types';
 
 export const ARTISTS: Artist[] = [
   {
+    "id": "ameen-sayani",
+    "name": "Ameen Sayani",
+    "hindiName": "अमीन सयानी",
+    "era": "1950s - 2000s",
+    "imageUrl": "/artists/ameen-sayani.jpg",
+    "bio": "The legendary voice of Radio Ceylon and Binaca Geetmala. His iconic greeting 'Namaskar Bhaiyo aur Behno' united millions across generations.",
+    "birthYear": "1932",
+    "deathYear": "2024",
+    "notableHits": [
+      "Binaca Geetmala Countdown",
+      "Ameen Sayani Commentary",
+      "Golden Era Interviews"
+    ],
+    "category": "indian"
+  },
+  {
     "id": "lata-mangeshkar",
     "name": "Lata Mangeshkar",
     "hindiName": "लता मंगेशकर",

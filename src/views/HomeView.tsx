@@ -6,7 +6,6 @@ import { DECADES } from '../data/decades';
 import { Artist, Decade, Song } from '../types';
 import { useAudio } from '../context/AudioContext';
 import { useDownload } from '../context/DownloadContext';
-import { RecommendationService } from '../services/recommendationService';
 import { WrappedBanner } from '../components/WrappedBanner';
 
 interface HomeViewProps {
@@ -24,51 +23,16 @@ export const HomeView: React.FC<HomeViewProps> = ({
   const { currentSong, isPlaying, playSong, togglePlay } = useAudio();
   const { downloadSong, isDownloaded, downloadingId } = useDownload();
 
-  // Pure Indian / Bollywood Master Collection for Home Screen (strictly no regional Bhojpuri/junk)
-  const indianSongs = SONGS.filter((s) => {
-    if (s.language === 'english') return false;
-    const combined = `${s.title} ${s.artist} ${s.movie} ${s.genre || ''}`.toLowerCase();
-    return !combined.includes('bhojpuri') && !combined.includes('khesari') && !combined.includes('nirahua');
-  });
+  // All 5,026 songs
+  const carvaanSongs = SONGS;
+  const topArtists = ARTISTS;
 
-  const indianArtists = ARTISTS.filter((a) => a.category !== 'international');
-
-  // Masterpieces algorithm prioritized for timeless golden classics (90%+ Kishore, Lata, Rafi, Mukesh, Asha, Jagjit, Sonu, KK, Sanu, Udit)
   const generateBalancedMasterpieces = (): Song[] => {
-    // Top Evergreen Core Legends
-    const goldenLegends = [
-      'kishore', 'lata', 'rafi', 'mukesh', 'asha', 'jagjit', 'hemant', 
-      'manna dey', 'talat mahmood', 'sonu nigam', 'kk', 'kumar sanu', 
-      'udit narayan', 'alka yagnik', 'lucky ali', 'shreya ghoshal'
-    ];
-
-    // Singers requested to have minimal/very rare suggestion in random masterpieces
-    const rareSingers = [
-      'badshah', 'guru randhawa', 'mika singh', 'b praak', 
-      'darshan raval', 'papon', 'yesudas', 'saigal', 'suraiya'
-    ];
-
-    const pickedSongs: Song[] = [];
-    const usedIds = new Set<string>();
-
-    // 1. Pick 18 songs strictly from the timeless Golden Era masters
-    const corePool = indianSongs.filter((s) => {
-      const txt = `${s.artist} ${s.title}`.toLowerCase();
-      return goldenLegends.some((g) => txt.includes(g)) && !rareSingers.some((r) => txt.includes(r));
-    }).sort(() => 0.5 - Math.random());
-
-    for (const song of corePool) {
-      if (!usedIds.has(song.id)) {
-        pickedSongs.push(song);
-        usedIds.add(song.id);
-      }
-      if (pickedSongs.length >= 20) break;
-    }
-
-    return pickedSongs.sort(() => 0.5 - Math.random());
+    // Pick 20 random evergreen songs from the Carvaan catalog
+    const shuffled = [...carvaanSongs].sort(() => 0.5 - Math.random());
+    return shuffled.slice(0, 24);
   };
 
-  // Instant initial load with zero delay
   const [randomSuggestions, setRandomSuggestions] = useState<Song[]>(() => {
     return generateBalancedMasterpieces();
   });
@@ -86,20 +50,20 @@ export const HomeView: React.FC<HomeViewProps> = ({
           <div className="space-y-2 max-w-[70%]">
             <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-retro-gold/20 text-retro-gold text-[11px] font-bold tracking-wider uppercase border border-retro-gold/30">
               <Radio className="w-3 h-3 animate-pulse" />
-              <span>NON-STOP GOLDEN RADIO</span>
+              <span>CARVAAN 24/7 RADIO</span>
             </div>
             <h2 className="text-xl font-bold text-retro-cream font-serif leading-tight">
-              सदाबहार रेडियो स्टेशन
+              ??????? ?????? ??????
             </h2>
             <p className="text-xs text-retro-cream/70 line-clamp-2">
-              2,800+ अमर बॉलीवुड गीत (1950 - 2010s)। 100% विज्ञापन-मुक्त।
+              5,000+ ??????? ??????? ??? ??? ???? ????? ???????? 100% ????????-??????
             </p>
           </div>
 
           <button
             onClick={() => {
-              const randomTrack = indianSongs[Math.floor(Math.random() * indianSongs.length)];
-              playSong(randomTrack, indianSongs);
+              const randomTrack = carvaanSongs[Math.floor(Math.random() * carvaanSongs.length)];
+              playSong(randomTrack, carvaanSongs);
             }}
             className="w-16 h-16 rounded-full bg-amber-400 hover:bg-amber-300 text-black flex items-center justify-center shadow-xl shadow-retro-gold/30 hover:scale-105 active:scale-95 transition-all flex-shrink-0 ml-3"
             title="Play Radio"
@@ -109,14 +73,14 @@ export const HomeView: React.FC<HomeViewProps> = ({
         </div>
       </section>
 
-      {/* Sunehre Geet Wrapped Banner: Strictly for the last 7 days of the year (Dec 25 - Dec 31) */}
+      {/* Carvaan Wrapped Banner */}
       {onOpenWrapped && (() => {
         const now = new Date();
         const isYearEnd = now.getMonth() === 11 && now.getDate() >= 25 && now.getDate() <= 31;
         return isYearEnd ? <WrappedBanner onOpenWrapped={onOpenWrapped} periodType="yearly" /> : null;
       })()}
 
-      {/* 2. Mood & Ras (भाव) Curated Categories */}
+      {/* 2. Mood & Ras Curated Categories */}
       <section className="space-y-2.5">
         <div className="flex items-center gap-2">
           <div className="w-8 h-8 rounded-xl bg-retro-gold/15 border border-retro-gold/30 flex items-center justify-center text-retro-gold flex-shrink-0">
@@ -124,55 +88,64 @@ export const HomeView: React.FC<HomeViewProps> = ({
           </div>
           <div>
             <h3 className="font-serif font-bold text-sm sm:text-base text-retro-cream leading-tight">
-              मूड और भाव (Mood Playlists)
+              ??? ?? ??? (Mood Playlists)
             </h3>
-            <p className="text-[10px] text-white/50">आपके हर एहसास के लिए ख़ास धुनें</p>
+            <p className="text-[10px] text-white/50">???? ?? ????? ?? ??? ???? ?????</p>
           </div>
         </div>
 
         <div className="flex gap-2.5 overflow-x-auto pb-1 scrollbar-none snap-x snap-mandatory">
           {[
             {
+              id: 'geetmala',
+              title: '?????? ???????',
+              sub: 'Ameen Sayani Flashback',
+              emoji: '??',
+              bg: 'from-amber-900/80 to-yellow-950/80',
+              border: 'border-amber-500/30',
+              keywords: ['commentary', 'interview', 'geetmala', 'ameen', 'sayani'],
+            },
+            {
               id: 'romantic',
-              title: 'प्यार के नग़मे',
+              title: '????? ?? ?????',
               sub: 'Golden Romance',
-              emoji: '❤️',
+              emoji: '??',
               bg: 'from-rose-900/80 to-amber-950/80',
               border: 'border-rose-500/30',
               keywords: ['pyaar', 'dil', 'ishq', 'mohabbat', 'sanam', 'deewana', 'tum', 'chand'],
             },
             {
               id: 'sad',
-              title: 'दर्द भरे गीत',
+              title: '???? ??? ???',
               sub: 'Soulful & Melancholy',
-              emoji: '💔',
+              emoji: '??',
               bg: 'from-indigo-950/80 to-slate-900/80',
               border: 'border-indigo-500/30',
               keywords: ['dard', 'gham', 'juda', 'aansoo', 'kismat', 'bewafa', 'tanhai', 'roye'],
             },
             {
               id: 'monsoon',
-              title: 'बरखा ऋतू',
-              sub: 'Monsoon & Rain Ragas',
-              emoji: '🌧️',
+              title: '???? ???',
+              sub: 'Monsoon & Rain Classics',
+              emoji: '???',
               bg: 'from-cyan-950/80 to-blue-950/80',
               border: 'border-cyan-500/30',
               keywords: ['rimjhim', 'barish', 'sawan', 'badal', 'megha', 'barse', 'boond'],
             },
             {
               id: 'ghazal',
-              title: 'शाम-ए-ग़ज़ल',
-              sub: 'Jagjit & Soul Ghazals',
-              emoji: '☕',
+              title: '???-?-?????',
+              sub: 'Jagjit & Ghazals',
+              emoji: '?',
               bg: 'from-amber-950/80 to-orange-950/80',
               border: 'border-amber-500/30',
               keywords: ['ghazal', 'jagjit', 'mehdi', 'chitra', 'hothon', 'baat', 'shaam', 'nazar'],
             },
             {
               id: 'masti',
-              title: 'मस्ती और क़व्वाली',
+              title: '????? ?? ????',
               sub: 'Retro Dance & Beats',
-              emoji: '🕺',
+              emoji: '??',
               bg: 'from-emerald-950/80 to-teal-950/80',
               border: 'border-emerald-500/30',
               keywords: ['disco', 'masti', 'qawwali', 'dosti', 'dum', 'pardesiya', 'sholay'],
@@ -182,11 +155,11 @@ export const HomeView: React.FC<HomeViewProps> = ({
               <div
                 key={m.id}
                 onClick={() => {
-                  const moodTracks = indianSongs.filter((s) => {
+                  const moodTracks = carvaanSongs.filter((s) => {
                     const txt = `${s.title} ${s.artist} ${s.movie || ''}`.toLowerCase();
                     return m.keywords.some((k) => txt.includes(k));
                   });
-                  const pool = moodTracks.length > 0 ? moodTracks : indianSongs;
+                  const pool = moodTracks.length > 0 ? moodTracks : carvaanSongs;
                   const firstTrack = pool[Math.floor(Math.random() * pool.length)];
                   playSong(firstTrack, pool);
                 }}
@@ -203,7 +176,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
         </div>
       </section>
 
-      {/* 3. रैंडम मास्टरपीस (Random Masterpieces) */}
+      {/* 3. ????? ????????? */}
       <section className="space-y-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
@@ -212,10 +185,10 @@ export const HomeView: React.FC<HomeViewProps> = ({
             </div>
             <div>
               <h3 className="font-serif font-bold text-sm sm:text-base text-retro-cream leading-tight">
-                रैंडम मास्टरपीस (Random Masterpieces)
+                ????? ?????? ????????? (Random Picks)
               </h3>
               <p className="text-[10px] text-white/50">
-                हर बार कुछ नया, अनोखा और सदाबहार
+                ?? ??? ??? ???, ????? ?? ???????
               </p>
             </div>
           </div>
@@ -226,7 +199,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
             title="Shuffle New Masterpieces"
           >
             <Shuffle className="w-3.5 h-3.5" />
-            <span>बदलें (New)</span>
+            <span>????? (New)</span>
           </button>
         </div>
 
@@ -249,6 +222,9 @@ export const HomeView: React.FC<HomeViewProps> = ({
                     alt={song.title}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                     loading="lazy"
+                    onError={(e) => {
+                      (e.target as HTMLImageElement).src = '/logo.png';
+                    }}
                   />
                   <div
                     className={`absolute inset-0 bg-black/40 flex items-center justify-center transition-opacity ${
@@ -274,13 +250,13 @@ export const HomeView: React.FC<HomeViewProps> = ({
                     {song.title}
                   </h4>
                   <p className="text-[10px] text-white/50 truncate">
-                    {song.artist.split(',')[0]}
+                    {song.artist}
                   </p>
                 </div>
 
                 <div className="flex items-center justify-between pt-2 mt-1 border-t border-white/5">
                   <span className="text-[9px] px-1.5 py-0.5 rounded bg-white/5 text-retro-gold/90 font-mono">
-                    {song.year}
+                    {song.year || 'Retro'}
                   </span>
 
                   <button
@@ -308,7 +284,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
         </div>
       </section>
 
-      {/* 3. Golden Decades (दशक) */}
+      {/* 4. Golden Decades (???) */}
       <section className="space-y-3">
         <div className="flex items-center gap-2">
           <div className="w-8 h-8 rounded-xl bg-retro-gold/15 border border-retro-gold/30 flex items-center justify-center text-retro-gold flex-shrink-0">
@@ -316,10 +292,10 @@ export const HomeView: React.FC<HomeViewProps> = ({
           </div>
           <div>
             <h3 className="font-serif font-bold text-sm sm:text-base text-retro-cream leading-tight">
-              सुनहरे दशक (Golden Eras)
+              ?????? ??? ??? ??????? (Golden Eras)
             </h3>
             <p className="text-[10px] text-white/50">
-              1950 के क्लासिक्स से लेकर 2000 के हिट्स तक
+              1950 ?? ????????? ?? ???? ?????? ??????? ??
             </p>
           </div>
         </div>
@@ -347,19 +323,19 @@ export const HomeView: React.FC<HomeViewProps> = ({
         </div>
       </section>
 
-      {/* 4. Top Maestros Preview (शीर्ष गायक) */}
+      {/* 5. Top Maestros Preview (????? ????) */}
       <section className="space-y-3">
         <div className="flex items-center justify-between">
           <h3 className="font-serif font-bold text-sm sm:text-base text-retro-cream">
-            शीर्ष गायक (Top Maestros)
+            ????? ?????? ??? ???? (Top Maestros)
           </h3>
           <span className="text-xs text-retro-gold/80 font-semibold">
-            {indianArtists.length} गायक
+            {topArtists.length} ??????
           </span>
         </div>
 
         <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-none snap-x">
-          {indianArtists.map((artist) => (
+          {topArtists.map((artist) => (
             <button
               key={artist.id}
               onClick={() => onSelectArtist(artist)}
@@ -371,6 +347,9 @@ export const HomeView: React.FC<HomeViewProps> = ({
                   alt={artist.name}
                   className="w-full h-full object-cover rounded-full group-hover:scale-105 transition-transform"
                   loading="lazy"
+                  onError={(e) => {
+                    (e.target as HTMLImageElement).src = '/logo.png';
+                  }}
                 />
               </div>
               <span className="text-[11px] font-bold text-retro-cream truncate w-full group-hover:text-retro-gold transition-colors">
