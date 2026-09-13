@@ -5,6 +5,13 @@ A standalone, vintage-styled mobile music player application engineered for the 
 ![License](https://img.shields.io/badge/License-MIT-gold.svg)
 ![Platform](https://img.shields.io/badge/Platform-Web%20%7C%20PWA%20%7C%20Android%20APK-orange.svg)
 ![Songs](https://img.shields.io/badge/Songs-5%2C026%20Tracks-green.svg)
+![Cloud Storage](https://img.shields.io/badge/Cloud%20Source-Mega.nz-red.svg)
+
+---
+
+## ☁️ Cloud Songs Repository
+All 5,026 Carvaan tracks are hosted on Mega:
+👉 **[Download / Stream Carvaan Collection on Mega](https://mega.nz/folder/VzAVUJBB#RyX1V3cxw7jyNu4k6aYebg)**
 
 ---
 
@@ -23,7 +30,7 @@ A standalone, vintage-styled mobile music player application engineered for the 
   - Automatic integration with public synchronized `.lrc` databases.
 - 📱 **Dual Playback Engine (Zero Laptop Required):**
   - **Offline Local Mode:** Copy the folder to your phone (`/Music/carvaan`) and play completely offline with zero internet and zero buffering.
-  - **Cloud Mode:** Stream from Cloudflare R2 / AWS S3 / custom URL if hosted remotely.
+  - **Cloud Mode:** Direct sync and streaming from the cloud repository.
 - 🎧 **Mobile First & Background Audio:**
   - MediaSession API integration (Android lockscreen & notification controls).
   - PWA support: Install as a standalone mobile application via Chrome / Edge.
@@ -32,45 +39,15 @@ A standalone, vintage-styled mobile music player application engineered for the 
 
 ## 🚀 Quick Start
 
-### 1. Run on Laptop
-Open `index.html` in your browser:
-```bash
-# Open directly in browser
-start index.html
-```
+### 1. Run Live Web App
+👉 **[https://ashirvadraj.github.io/saregama-carvaan/](https://ashirvadraj.github.io/saregama-carvaan/)**
 
-### 2. Run Local Streaming Server (For Mobile on Home Wi-Fi)
-```bash
-python server.py
-```
-Then on your phone's browser, navigate to:
-```
-http://<YOUR_LAPTOP_IP>:8080
-```
-Tap **"Install App"** or **"Add to Home Screen"** to use it as a standalone app!
-
-### 3. Use 100% Offline on Mobile (No Laptop Needed)
-1. Copy the `carvaan` audio folder to your phone (`/Music/carvaan`).
-2. Open the app on your phone.
-3. Tap **"Set Folder"** at the top right and select the `carvaan` folder.
-4. Enjoy all 5,026 songs with lyrics anywhere offline!
-
----
-
-## 📂 Project Structure
-
-```
-├── data/
-│   ├── catalog.json       # Master index of 5,026 tracks with artist & category metadata
-│   └── catalog.js         # Fast offline JavaScript bundle
-├── app.js                 # Core audio engine, rotary dial handler, and lyrics sync
-├── index.html             # Carvaan chassis UI and responsive layout
-├── style.css              # Vintage retro theme styling and animations
-├── server.py              # Local HTTP audio streaming server with Range header support
-├── generate_catalog.py    # Python indexing tool for raw Carvaan dumps
-├── manifest.json          # PWA Mobile manifest
-└── sw.js                  # Service worker for offline caching
-```
+### 2. Install on Mobile Phone (100% Standalone)
+1. Download the `carvaan` collection to your phone from [Mega](https://mega.nz/folder/VzAVUJBB#RyX1V3cxw7jyNu4k6aYebg) or via USB from laptop.
+2. Open **[https://ashirvadraj.github.io/saregama-carvaan/](https://ashirvadraj.github.io/saregama-carvaan/)** on your phone.
+3. Tap the **3 dots** in Chrome → Tap **"Install app"** (or **"Add to Home Screen"**).
+4. Tap **"Set Folder"** at the top right of the app and choose your `carvaan` folder.
+5. Enjoy all 5,026 songs with lyrics anywhere offline without internet or laptop!
 
 ---
 
