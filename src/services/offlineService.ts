@@ -1,7 +1,7 @@
 import { Song } from '../types';
 
-const CACHE_NAME = 'sunehre-geet-offline-v1';
-const METADATA_KEY = 'sunehre_geet_downloaded_songs';
+const CACHE_NAME = 'carvaan-offline-v1';
+const METADATA_KEY = 'carvaan_downloaded_songs';
 
 export const getDownloadedSongs = (): Song[] => {
   try {

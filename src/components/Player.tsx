@@ -181,7 +181,7 @@ export const Player: React.FC<PlayerProps> = ({ onOpenSleepTimer }) => {
             }`}
           >
             <Disc className="w-3.5 h-3.5" />
-            <span className="hidden sm:inline">???????</span>
+            <span className="hidden sm:inline">Record</span>
             <span>Record</span>
           </button>
           <button
@@ -196,7 +196,7 @@ export const Player: React.FC<PlayerProps> = ({ onOpenSleepTimer }) => {
             }`}
           >
             <FileText className="w-3.5 h-3.5" />
-            <span className="hidden sm:inline">???</span>
+            <span className="hidden sm:inline">Lyrics</span>
             <span>Lyrics</span>
             {lyricsData?.isSynced && (
               <Sparkles className="w-3 h-3 text-amber-300 animate-pulse" />
@@ -257,7 +257,7 @@ export const Player: React.FC<PlayerProps> = ({ onOpenSleepTimer }) => {
             <div className="flex items-center gap-2">
               <Music2 className="w-4 h-4 text-retro-gold" />
               <span className="text-xs font-bold text-retro-cream">
-                {lyricsData?.isSynced ? '? ??? ????????????? ??? (Synced)' : '?? ??? ?? ??? (Static Lyrics)'}
+                {lyricsData?.isSynced ? '? Lyrics RecordLyricsLyrics Lyrics (Synced)' : ' Lyrics  Lyrics (Static Lyrics)'}
               </span>
             </div>
 
@@ -291,7 +291,7 @@ export const Player: React.FC<PlayerProps> = ({ onOpenSleepTimer }) => {
               <div className="flex flex-col items-center justify-center h-full space-y-3 py-16">
                 <Loader2 className="w-8 h-8 text-retro-gold animate-spin" />
                 <p className="text-sm font-medium text-retro-cream/70 animate-pulse">
-                  ??? ?? ??? ??? ?? ??? ???...
+                  Lyrics  Lyrics Lyrics  Lyrics Lyrics...
                 </p>
               </div>
             ) : lyricsData && lyricsData.lines.length > 0 ? (
@@ -352,7 +352,7 @@ export const Player: React.FC<PlayerProps> = ({ onOpenSleepTimer }) => {
             ) : (
               <div className="flex flex-col items-center justify-center h-full space-y-2 py-16 text-white/50">
                 <FileText className="w-8 h-8 text-retro-gold/40 mb-1" />
-                <p className="text-sm font-semibold">?? ??? ?? ??? ?????? ???? ???</p>
+                <p className="text-sm font-semibold"> Lyrics  Lyrics LyricsLyrics Lyrics? Lyrics</p>
                 <p className="text-xs">No synchronized lyrics found</p>
               </div>
             )}
@@ -370,8 +370,8 @@ export const Player: React.FC<PlayerProps> = ({ onOpenSleepTimer }) => {
             {currentSong.artist}
           </p>
           <div className="flex items-center gap-2 text-[10px] text-white/50">
-            {currentSong.movie && <span>?? {currentSong.movie}</span>}
-            {currentSong.year && <span>? ?? {currentSong.year}</span>}
+            {currentSong.movie && <span> {currentSong.movie}</span>}
+            {currentSong.year && <span>?  {currentSong.year}</span>}
           </div>
         </div>
 

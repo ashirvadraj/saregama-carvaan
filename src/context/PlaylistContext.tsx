@@ -27,10 +27,10 @@ interface PlaylistContextType {
 const PlaylistContext = createContext<PlaylistContextType | undefined>(undefined);
 
 const STORAGE_KEYS = {
-  LIKED: 'sunehre_geet_liked',
-  LIKED_MAP: 'sunehre_geet_liked_map_v2',
-  PLAYLISTS: 'sunehre_geet_playlists',
-  RECENT: 'sunehre_geet_recent',
+  LIKED: 'carvaan_liked',
+  LIKED_MAP: 'carvaan_liked_map_v2',
+  PLAYLISTS: 'carvaan_playlists',
+  RECENT: 'carvaan_recent',
 };
 
 const DEFAULT_PLAYLISTS: Playlist[] = [
@@ -216,8 +216,8 @@ export const PlaylistProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         setLikedSongsMap(prev => ({ ...prev, [song.id]: song }));
       }
     };
-    window.addEventListener('sunehreSongPlayed', handleSongPlayed);
-    return () => window.removeEventListener('sunehreSongPlayed', handleSongPlayed);
+    window.addEventListener('carvaanSongPlayed', handleSongPlayed);
+    return () => window.removeEventListener('carvaanSongPlayed', handleSongPlayed);
   }, []);
 
   // Resolve displayable favorites: ensure NO song is ever dropped!
@@ -257,7 +257,7 @@ export const PlaylistProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     clearTimeout(syncTimeoutRef.current);
     syncTimeoutRef.current = setTimeout(() => {
       const userProfile = user || {
-        email: 'local_user@sunehregeet.app',
+        email: 'local_user@carvaan.app',
         name: 'Local User',
         picture: '',
         sub: 'local_default',
@@ -284,7 +284,7 @@ export const PlaylistProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       // Immediate sync to native storage
       setTimeout(() => {
         const userProfile = user || {
-          email: 'local_user@sunehregeet.app',
+          email: 'local_user@carvaan.app',
           name: 'Local User',
           picture: '',
           sub: 'local_default',

@@ -11,14 +11,14 @@ export const CURRENT_APP_VERSION = 69.0;
 
 const CLOUD_GIST_ID = 'a62d2ce04fb2cad264471951a42790da';
 const RAW_GIST_URL = `https://gist.githubusercontent.com/ashirvadraj/${CLOUD_GIST_ID}/raw/app_version_config.json`;
-const REPO_FALLBACK_URL = 'https://raw.githubusercontent.com/ashirvadraj/sunehre-geet/main/version_config.json';
+const REPO_FALLBACK_URL = 'https://raw.githubusercontent.com/ashirvadraj/saregama-carvaan/master/version_config.json';
 const API_GIST_URL = `https://api.github.com/gists/${CLOUD_GIST_ID}`;
 
 export const VersionService = {
-  isLocked: localStorage.getItem('sunehre_app_locked') === 'true',
+  isLocked: localStorage.getItem('carvaan_app_locked') === 'true',
   cachedConfig: (() => {
     try {
-      const raw = localStorage.getItem('sunehre_cached_version_config');
+      const raw = localStorage.getItem('carvaan_cached_version_config');
       return raw ? JSON.parse(raw) : null;
     } catch {
       return null;
@@ -42,11 +42,11 @@ export const VersionService = {
   applyHardLock(config?: VersionConfig): void {
     this.isLocked = true;
     try {
-      localStorage.setItem('sunehre_app_locked', 'true');
+      localStorage.setItem('carvaan_app_locked', 'true');
       if (config) {
-        localStorage.setItem('sunehre_cached_version_config', JSON.stringify(config));
+        localStorage.setItem('carvaan_cached_version_config', JSON.stringify(config));
       }
-      window.dispatchEvent(new CustomEvent('sunehreVersionLocked', { detail: { config } }));
+      window.dispatchEvent(new CustomEvent('carvaanVersionLocked', { detail: { config } }));
       const cap = (window as any).Capacitor;
       if (cap?.Plugins?.MediaNotificationPlugin?.hideNotification) {
         cap.Plugins.MediaNotificationPlugin.hideNotification();
@@ -81,7 +81,7 @@ export const VersionService = {
                 if (isUpdateRequired) {
                   this.applyHardLock(config);
                 } else {
-                  localStorage.removeItem('sunehre_app_locked');
+                  localStorage.removeItem('carvaan_app_locked');
                   this.isLocked = false;
                 }
                 return { isUpdateRequired, config };
@@ -105,7 +105,7 @@ export const VersionService = {
             if (isUpdateRequired) {
               this.applyHardLock(config);
             } else {
-              localStorage.removeItem('sunehre_app_locked');
+              localStorage.removeItem('carvaan_app_locked');
               this.isLocked = false;
             }
             return { isUpdateRequired, config };

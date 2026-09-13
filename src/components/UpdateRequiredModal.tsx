@@ -7,7 +7,7 @@ interface UpdateRequiredModalProps {
 }
 
 export const UpdateRequiredModal: React.FC<UpdateRequiredModalProps> = ({ config }) => {
-  const updateUrl = config?.update_url || 'https://github.com/ashirvadraj/sunehre-geet/releases/latest';
+  const updateUrl = config?.update_url || 'https://github.com/ashirvadraj/saregama-carvaan/releases/latest';
 
   const handleUpdate = () => {
     window.open(updateUrl, '_system');

@@ -75,12 +75,12 @@ export const MainApp: React.FC = () => {
         pause();
       }
     };
-    window.addEventListener('sunehreVersionLocked', onLocked);
+    window.addEventListener('carvaanVersionLocked', onLocked);
 
     return () => {
       clearInterval(interval);
       document.removeEventListener('visibilitychange', onVisibility);
-      window.removeEventListener('sunehreVersionLocked', onLocked);
+      window.removeEventListener('carvaanVersionLocked', onLocked);
     };
   }, [pause]);
 

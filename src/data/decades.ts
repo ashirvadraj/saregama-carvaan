@@ -2,63 +2,59 @@ import { Decade } from '../types';
 
 export const DECADES: Decade[] = [
   {
-    id: '50s',
-    title: 'The Golden 50s',
-    hindiTitle: 'सुहराना पचास का दशक',
-    years: '1950 - 1959',
-    description: 'Poetic depth and the emergence of Hemant Kumar, Talat Mahmood, Geeta Dutt, and early Lata Mangeshkar.',
-    imageUrl: 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=600&auto=format&fit=crop&q=80',
-    color: 'from-amber-900 to-yellow-950',
-    iconName: 'Radio'
+    "id": "geetmala",
+    "title": "Binaca Geetmala",
+    "hindiTitle": "बिनाका गीतमाला",
+    "years": "1952 - 1994",
+    "description": "Ameen Sayani historic countdowns, flashback commentary & legend interviews",
+    "coverUrl": "/artists/ameen-sayani.jpg",
+    "color": "from-amber-600 to-yellow-800"
   },
   {
-    id: '60s',
-    title: 'The Romantic 60s',
-    hindiTitle: 'रूमानी साठ का दशक',
-    years: '1960 - 1969',
-    description: 'The height of romance with Mohammed Rafi, Mukesh, Lata Mangeshkar, and S.D. Burman.',
-    imageUrl: 'https://images.unsplash.com/photo-1465847899084-d164df4dedc6?w=600&auto=format&fit=crop&q=80',
-    color: 'from-emerald-900 to-teal-950',
-    iconName: 'Sparkles'
+    "id": "50s",
+    "title": "1950s Classics",
+    "hindiTitle": "1950 का स्वर्ण युग",
+    "years": "1950 - 1959",
+    "description": "Lata, Rafi, Mukesh, Hemant, Geeta Dutt & Talat Mahmood foundations",
+    "coverUrl": "/artists/lata-mangeshkar.jpg",
+    "color": "from-amber-700 to-orange-900"
   },
   {
-    id: '70s',
-    title: 'The Electrifying 70s',
-    hindiTitle: 'धमाकेदार सत्तर का दशक',
-    years: '1970 - 1979',
-    description: 'R.D. Burman revolution, Kishore Kumar craze, and unforgettable duets with Asha Bhosle.',
-    imageUrl: 'https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=600&auto=format&fit=crop&q=80',
-    color: 'from-purple-900 to-indigo-950',
-    iconName: 'Flame'
+    "id": "60s",
+    "title": "1960s Evergreen",
+    "hindiTitle": "1960 के सदाबहार नग़मे",
+    "years": "1960 - 1969",
+    "description": "Rafi, Lata, Mukesh, Shamshad Begum & Manna Dey immortal melodies",
+    "coverUrl": "/artists/mohammed-rafi.jpg",
+    "color": "from-purple-800 to-indigo-950"
   },
   {
-    id: '80s',
-    title: 'The Melodic 80s',
-    hindiTitle: 'मधुर अस्सी का दशक',
-    years: '1980 - 1989',
-    description: 'Soulful ghazal wave led by Jagjit Singh, Asha Bhosle, Kishore Kumar, and soft acoustics.',
-    imageUrl: 'https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?w=600&auto=format&fit=crop&q=80',
-    color: 'from-rose-900 to-pink-950',
-    iconName: 'Disc'
+    "id": "70s",
+    "title": "1970s Retro Magic",
+    "hindiTitle": "1970 का रेट्रो जादू",
+    "years": "1970 - 1979",
+    "description": "Kishore Kumar, R.D. Burman, Asha Bhosle & Yesudas revolution",
+    "coverUrl": "/artists/kishore-kumar.jpg",
+    "color": "from-red-800 to-rose-950"
   },
   {
-    id: '90s',
-    title: 'The Evergreen 90s',
-    hindiTitle: 'सदाबहार नब्बे का दशक',
-    years: '1990 - 1999',
-    description: 'Nostalgic melodies by Kumar Sanu, Alka Yagnik, Udit Narayan, and KK’s legendary debut Pal.',
-    imageUrl: 'https://images.unsplash.com/photo-1518609878373-06d740f60d8b?w=600&auto=format&fit=crop&q=80',
-    color: 'from-blue-900 to-cyan-950',
-    iconName: 'Heart'
+    "id": "80s",
+    "title": "1980s Melodies",
+    "hindiTitle": "1980 का सुरीला दौर",
+    "years": "1980 - 1989",
+    "description": "Disco, Ghazals, S.P. Balasubrahmanyam & Jagjit Singh soul",
+    "coverUrl": "/artists/asha-bhosle.jpg",
+    "color": "from-emerald-800 to-teal-950"
   },
   {
-    id: '2000s',
-    title: 'The Iconic 2000s',
-    hindiTitle: 'मिलेनियम का जादू (2000s)',
-    years: '2000 - 2009',
-    description: 'Golden era of Sonu Nigam (Kal Ho Naa Ho), KK (Zara Sa, Dil Ibadat), and Himesh Reshammiya (Aashiq Banaya, Tera Suroor).',
-    imageUrl: 'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=600&auto=format&fit=crop&q=80',
-    color: 'from-amber-800 to-rose-950',
-    iconName: 'Flame'
+    "id": "90s",
+    "title": "1990s Golden Wave",
+    "hindiTitle": "1990 की सुनहरी लहर",
+    "years": "1990 - 1999",
+    "description": "Kumar Sanu, Alka Yagnik, Udit Narayan & Anuradha Paudwal blockbusters",
+    "coverUrl": "/artists/kumar-sanu.jpg",
+    "color": "from-blue-800 to-cyan-950"
   }
 ];
+export const decades = DECADES;
+export default DECADES;

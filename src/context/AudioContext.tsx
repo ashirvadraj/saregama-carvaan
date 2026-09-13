@@ -32,7 +32,7 @@ interface AudioContextType {
 
 const AudioContext = createContext<AudioContextType | undefined>(undefined);
 
-const LAST_PLAYBACK_KEY = 'sunehre_geet_last_playback_session';
+const LAST_PLAYBACK_KEY = 'carvaan_last_playback_session';
 
 // SINGLETON AUDIO INSTANCE
 export const singletonAudio: HTMLAudioElement = typeof window !== 'undefined' ? new Audio() : (null as any);
@@ -216,7 +216,7 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       const action = event.detail?.action;
       if (!singletonAudio) return;
 
-      if (VersionService.isLocked || localStorage.getItem('sunehre_app_locked') === 'true') {
+      if (VersionService.isLocked || localStorage.getItem('carvaan_app_locked') === 'true') {
         singletonAudio.pause();
         singletonAudio.src = '';
         setIsPlaying(false);
@@ -224,20 +224,20 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         return;
       }
 
-      if (action === 'com.sunehregeet.app.ACTION_PLAY') {
+      if (action === 'com.saregama.carvaan.ACTION_PLAY') {
         if (singletonAudio.paused) {
           singletonAudio.play().then(() => {
             setIsPlaying(true);
             updateNativeNotification(currentSongRef.current, true);
           }).catch(() => {});
         }
-      } else if (action === 'com.sunehregeet.app.ACTION_PAUSE') {
+      } else if (action === 'com.saregama.carvaan.ACTION_PAUSE') {
         if (!singletonAudio.paused) {
           singletonAudio.pause();
           setIsPlaying(false);
           updateNativeNotification(currentSongRef.current, false);
         }
-      } else if (action === 'com.sunehregeet.app.ACTION_NEXT') {
+      } else if (action === 'com.saregama.carvaan.ACTION_NEXT') {
         const q = queueRef.current;
         const cur = currentSongRef.current;
         if (cur && q.length > 0) {
@@ -250,7 +250,7 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
           }
           playSong(q[nextIndex], undefined, 0);
         }
-      } else if (action === 'com.sunehregeet.app.ACTION_PREV') {
+      } else if (action === 'com.saregama.carvaan.ACTION_PREV') {
         const q = queueRef.current;
         const cur = currentSongRef.current;
         if (cur && q.length > 0) {
@@ -274,7 +274,7 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       setIsPlaying(false);
       updateNativeNotification(null, false);
     };
-    window.addEventListener('sunehreVersionLocked', onVersionLocked);
+    window.addEventListener('carvaanVersionLocked', onVersionLocked);
 
     const onStalled = () => {
       if (singletonAudio && currentSongRef.current) {
@@ -297,7 +297,7 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       singletonAudio.removeEventListener('waiting', onStalled);
       document.removeEventListener('visibilitychange', onVisibilityChange);
       window.removeEventListener('nativeMediaAction', onNativeMediaAction);
-      window.removeEventListener('sunehreVersionLocked', onVersionLocked);
+      window.removeEventListener('carvaanVersionLocked', onVersionLocked);
     };
   }, []);
 
@@ -357,7 +357,7 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     if (!song || !singletonAudio) return;
 
     // Hard Killswitch: If version is locked, permanently block playback
-    if (VersionService.isLocked || localStorage.getItem('sunehre_app_locked') === 'true') {
+    if (VersionService.isLocked || localStorage.getItem('carvaan_app_locked') === 'true') {
       singletonAudio.pause();
       singletonAudio.src = '';
       setIsPlaying(false);
@@ -424,10 +424,10 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
       // Record to Recently Played & Wrapped Listening History
       try {
-        window.dispatchEvent(new CustomEvent('sunehreSongPlayed', { detail: { song } }));
-        const curRecent = JSON.parse(localStorage.getItem('sunehre_geet_recent') || '[]');
+        window.dispatchEvent(new CustomEvent('carvaanSongPlayed', { detail: { song } }));
+        const curRecent = JSON.parse(localStorage.getItem('carvaan_recent') || '[]');
         const updatedRecent = [song.id, ...curRecent.filter((id: string) => id !== song.id)].slice(0, 50);
-        localStorage.setItem('sunehre_geet_recent', JSON.stringify(updatedRecent));
+        localStorage.setItem('carvaan_recent', JSON.stringify(updatedRecent));
         WrappedService.recordPlayback(song.id, song.duration || 180);
       } catch {}
 
@@ -444,7 +444,7 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const togglePlay = () => {
     if (!singletonAudio) return;
 
-    if (VersionService.isLocked || localStorage.getItem('sunehre_app_locked') === 'true') {
+    if (VersionService.isLocked || localStorage.getItem('carvaan_app_locked') === 'true') {
       singletonAudio.pause();
       singletonAudio.src = '';
       setIsPlaying(false);

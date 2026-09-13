@@ -74,7 +74,7 @@ export const CloudSyncService = {
         user.email.toLowerCase().trim().split('').reduce((a, b) => ((a << 5) - a + b.charCodeAt(0)) | 0, 0)
       ).toString(36);
 
-      const existingRaw = localStorage.getItem(`sunehre_backup_${emailHash}`) || localStorage.getItem('sunehre_last_backup');
+      const existingRaw = localStorage.getItem(`carvaan_backup_${emailHash}`) || localStorage.getItem('carvaan_last_backup');
       if (existingRaw) {
         try {
           const existing: BackupData = JSON.parse(existingRaw);
@@ -94,8 +94,8 @@ export const CloudSyncService = {
       }
 
       const jsonStr = JSON.stringify(payloadToSave);
-      localStorage.setItem(`sunehre_backup_${emailHash}`, jsonStr);
-      localStorage.setItem('sunehre_last_backup', jsonStr);
+      localStorage.setItem(`carvaan_backup_${emailHash}`, jsonStr);
+      localStorage.setItem('carvaan_last_backup', jsonStr);
     } catch {}
 
     // 2. TRUE ONLINE GOOGLE CLOUD SYNC (Saves to user account file + backup_latest.json)
@@ -117,7 +117,7 @@ export const CloudSyncService = {
       fetch(`https://api.github.com/gists/${CLOUD_GIST_ID}`, {
         method: 'PATCH',
         headers: {
-          'User-Agent': 'SunehreGeet-App',
+          'User-Agent': 'SaregamaCarvaan-App',
           'Authorization': `token ${CLOUD_GIST_TOKEN}`,
           'Content-Type': 'application/json',
         },
@@ -154,7 +154,7 @@ export const CloudSyncService = {
     try {
       const fileKey = 'backup_' + cleanEmail.replace(/[^a-zA-Z0-9]/g, '_') + '.json';
       const gist = await nativeFetchJson(`https://api.github.com/gists/${CLOUD_GIST_ID}`, {
-        'User-Agent': 'SunehreGeet-App',
+        'User-Agent': 'SaregamaCarvaan-App',
         'Authorization': `token ${CLOUD_GIST_TOKEN}`,
       });
 
@@ -216,7 +216,7 @@ export const CloudSyncService = {
 
     // 4. Fetch from LocalStorage fallback
     try {
-      const raw = localStorage.getItem(`sunehre_backup_${emailHash}`) || localStorage.getItem('sunehre_last_backup');
+      const raw = localStorage.getItem(`carvaan_backup_${emailHash}`) || localStorage.getItem('carvaan_last_backup');
       if (raw) {
         const parsed = JSON.parse(raw);
         if (parsed && Array.isArray(parsed.likedSongIds) && parsed.likedSongIds.length > 0) {

@@ -1,8 +1,8 @@
-import React, { useState, useMemo, useEffect } from 'react';
-import { Play, Sparkles, ArrowLeft, Disc3, Search, Globe, Music2 } from 'lucide-react';
+import React, { useState, useMemo } from 'react';
+import { Play, Sparkles, ArrowLeft, Disc3, Search, User } from 'lucide-react';
 import { ARTISTS } from '../data/artists';
 import { SONGS } from '../data/songs';
-import { Artist, Song } from '../types';
+import { Artist } from '../types';
 import { SongItem } from '../components/SongItem';
 import { useAudio } from '../context/AudioContext';
 
@@ -18,41 +18,21 @@ export const ArtistsView: React.FC<ArtistsViewProps> = ({
   onOpenCreatePlaylist,
 }) => {
   const { playSong } = useAudio();
-  const [selectedCategory, setSelectedCategory] = useState<'indian' | 'international'>(() => {
-    return selectedArtist?.category === 'international' ? 'international' : 'indian';
-  });
   const [searchQuery, setSearchQuery] = useState('');
 
-  // Sync category with the selected artist if an artist was opened (e.g. from Search or Recommendations)
-  useEffect(() => {
-    if (selectedArtist?.category) {
-      setSelectedCategory(selectedArtist.category);
-    }
-  }, [selectedArtist]);
-
-  // 1. Filter artists by category
-  const categoryArtists = useMemo(() => {
-    return ARTISTS.filter((a) => {
-      if (selectedCategory === 'international') {
-        return a.category === 'international';
-      }
-      return a.category !== 'international';
-    });
-  }, [selectedCategory]);
-
-  // 2. Search filtering within current category
+  // 1. Search filtering across Carvaan legends
   const filteredArtists = useMemo(() => {
-    if (!searchQuery.trim()) return categoryArtists;
+    if (!searchQuery.trim()) return ARTISTS;
     const q = searchQuery.toLowerCase().trim();
-    return categoryArtists.filter(
+    return ARTISTS.filter(
       (a) =>
         a.name.toLowerCase().includes(q) ||
         (a.hindiName && a.hindiName.includes(q)) ||
         (a.bio && a.bio.toLowerCase().includes(q))
     );
-  }, [categoryArtists, searchQuery]);
+  }, [searchQuery]);
 
-  // 3. Strict artist songs retrieval when an artist is selected
+  // 2. Strict artist songs retrieval when an artist is selected
   const artistSongs = useMemo(() => {
     if (!selectedArtist) return [];
 
@@ -72,11 +52,9 @@ export const ArtistsView: React.FC<ArtistsViewProps> = ({
       });
     }
 
-    // Split artist first name / last name for robust matching (e.g. "Kishore", "Lata", "Rafi", "Mukesh", "Asha")
-    const nameParts = artistNameLower.split(' ').filter(p => p.length > 2);
+    const nameParts = artistNameLower.split(' ').filter((p) => p.length > 2);
 
     return SONGS.filter((song) => {
-      // Direct artistId link
       if (song.artistId && song.artistId.toLowerCase() === artistId) {
         return true;
       }
@@ -91,12 +69,11 @@ export const ArtistsView: React.FC<ArtistsViewProps> = ({
       if (songArtist.includes(artistNameLower)) return true;
 
       const songTitle = (song.title || '').toLowerCase();
-      // Check notable hits
-      if (selectedArtist.notableHits && selectedArtist.notableHits.some(h => songTitle.includes(h.toLowerCase()))) {
+      if (selectedArtist.notableHits && selectedArtist.notableHits.some((h) => songTitle.includes(h.toLowerCase()))) {
         return true;
       }
 
-      return nameParts.length > 0 && nameParts.every(p => songArtist.includes(p));
+      return nameParts.length > 0 && nameParts.every((p) => songArtist.includes(p));
     });
   }, [selectedArtist]);
 
@@ -107,18 +84,11 @@ export const ArtistsView: React.FC<ArtistsViewProps> = ({
         <div className="space-y-5 animate-slide-up">
           {/* Back Button */}
           <button
-            onClick={() => {
-              if (selectedArtist?.category) {
-                setSelectedCategory(selectedArtist.category);
-              }
-              onSelectArtist(null);
-            }}
+            onClick={() => onSelectArtist(null)}
             className="inline-flex items-center gap-2 text-xs font-bold text-retro-gold hover:text-amber-300 transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
-            <span>
-              ← Back to {selectedArtist?.category === 'international' || selectedCategory === 'international' ? 'International Singers (अंतर्राष्ट्रीय गायक)' : 'Bollywood Singers (बॉलीवुड गायक)'}
-            </span>
+            <span>← सभी गायक (All Carvaan Maestros)</span>
           </button>
 
           {/* Artist Hero Banner */}
@@ -130,7 +100,7 @@ export const ArtistsView: React.FC<ArtistsViewProps> = ({
                   alt={selectedArtist.name}
                   className="w-full h-full rounded-full object-cover"
                   onError={(e) => {
-                    (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=600&auto=format&fit=crop&q=80';
+                    (e.target as HTMLImageElement).src = '/logo.png';
                   }}
                 />
               </div>
@@ -182,15 +152,15 @@ export const ArtistsView: React.FC<ArtistsViewProps> = ({
 
             {artistSongs.length === 0 ? (
               <div className="p-8 rounded-2xl bg-[#18112b]/60 border border-white/5 text-center text-xs text-white/50 space-y-1">
-                <p>इस कलाकार के गीत लोड हो रहे हैं...</p>
+                <p>इस कलाकार के गीत खोजे जा रहे हैं...</p>
               </div>
             ) : (
               <div className="space-y-1">
-                {artistSongs.map((song, index) => (
+                {artistSongs.map((song, idx) => (
                   <SongItem
                     key={song.id}
                     song={song}
-                    index={index}
+                    index={idx}
                     playlistQueue={artistSongs}
                     onAddToPlaylistClick={onOpenCreatePlaylist}
                   />
@@ -200,98 +170,63 @@ export const ArtistsView: React.FC<ArtistsViewProps> = ({
           </div>
         </div>
       ) : (
-        /* ARTISTS SELECTION GRID */
-        <div className="space-y-5">
-          {/* Header Title */}
-          <div>
-            <h2 className="font-serif font-bold text-xl text-retro-cream">
-              महान गायक (Legendary Voices)
-            </h2>
-            <p className="text-xs text-retro-muted">
-              Explore 120+ Indian Bollywood Maestros and International Legends
-            </p>
-          </div>
-
-          {/* Category Switcher: Bollywood vs Global */}
-          <div className="grid grid-cols-2 rounded-2xl bg-white/5 p-1 border border-white/10 text-xs font-semibold gap-1">
-            <button
-              onClick={() => {
-                setSelectedCategory('indian');
-                setSearchQuery('');
-              }}
-              className={`py-2.5 rounded-xl flex items-center justify-center gap-1.5 transition-all ${
-                selectedCategory === 'indian'
-                  ? 'bg-gradient-to-r from-retro-gold to-amber-500 text-retro-dark shadow-lg font-bold'
-                  : 'text-retro-muted hover:text-retro-cream'
-              }`}
-            >
-              <Music2 className="w-3.5 h-3.5" />
-              <span>🇮🇳 Bollywood</span>
-            </button>
-
-            <button
-              onClick={() => {
-                setSelectedCategory('international');
-                setSearchQuery('');
-              }}
-              className={`py-2.5 rounded-xl flex items-center justify-center gap-1.5 transition-all ${
-                selectedCategory === 'international'
-                  ? 'bg-gradient-to-r from-retro-gold to-amber-500 text-retro-dark shadow-lg font-bold'
-                  : 'text-retro-muted hover:text-retro-cream'
-              }`}
-            >
-              <Globe className="w-3.5 h-3.5" />
-              <span>🌍 Global</span>
-            </button>
-          </div>
-
-          {/* Search Bar for current category */}
+        /* GRID VIEW: All Carvaan Legends */
+        <div className="space-y-4">
+          {/* Search Filter Bar */}
           <div className="relative">
-            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-retro-gold/60" />
+            <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-retro-gold">
+              <Search className="w-4 h-4" />
+            </div>
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search any singer (e.g. Taio Cruz, Guru Randhawa, Kishore, Badshah, Sia)..."
-              className="w-full pl-10 pr-4 py-2.5 rounded-2xl bg-[#18112b] border border-white/10 text-xs text-retro-cream placeholder-white/40 focus:outline-none focus:border-retro-gold/50 transition-colors"
+              placeholder="गायक का नाम खोजें (Search singer name)..."
+              className="w-full pl-10 pr-4 py-2.5 rounded-2xl bg-[#18112b] border border-retro-gold/20 text-retro-cream placeholder-white/40 text-xs focus:outline-none focus:border-retro-gold transition-all"
             />
           </div>
 
+          {/* Singer Count Header */}
+          <div className="flex items-center justify-between px-1">
+            <h3 className="font-serif font-bold text-sm text-retro-cream flex items-center gap-1.5">
+              <User className="w-4 h-4 text-retro-gold" />
+              <span>सदाबहार कलाकार ({filteredArtists.length})</span>
+            </h3>
+            <span className="text-[11px] text-white/50 font-mono">5,026 Classic Tracks</span>
+          </div>
+
           {/* Artists Grid */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
             {filteredArtists.map((artist) => (
               <button
                 key={artist.id}
-                onClick={() => {
-                  if (artist.category) {
-                    setSelectedCategory(artist.category);
-                  }
-                  onSelectArtist(artist);
-                }}
-                className="p-4 rounded-2xl bg-[#160e29] border border-white/5 hover:border-retro-gold/40 transition-all text-center space-y-3 group shadow-md hover:bg-[#1f143a]"
+                onClick={() => onSelectArtist(artist)}
+                className="group relative overflow-hidden rounded-2xl p-3.5 bg-[#18112b] border border-white/10 hover:border-retro-gold/40 transition-all text-left flex flex-col items-center text-center space-y-2.5 shadow-md hover:scale-[1.02] active:scale-98"
               >
-                <div className="relative w-20 h-20 sm:w-24 sm:h-24 rounded-full mx-auto p-0.5 bg-gradient-to-tr from-retro-gold via-amber-400 to-purple-600 shadow-lg group-hover:scale-105 transition-transform duration-300">
+                <div className="relative w-20 h-20 rounded-full overflow-hidden p-0.5 bg-gradient-to-tr from-retro-gold via-amber-400 to-purple-600 shadow-lg">
                   <img
                     src={artist.imageUrl}
                     alt={artist.name}
-                    className="w-full h-full rounded-full object-cover"
+                    className="w-full h-full object-cover rounded-full group-hover:scale-105 transition-transform duration-300"
+                    loading="lazy"
                     onError={(e) => {
-                      (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=600&auto=format&fit=crop&q=80';
+                      (e.target as HTMLImageElement).src = '/logo.png';
                     }}
                   />
                 </div>
-                <div className="space-y-0.5">
-                  <h4 className="font-serif font-bold text-xs sm:text-sm text-retro-cream group-hover:text-retro-gold transition-colors truncate">
+
+                <div className="space-y-0.5 w-full">
+                  <h4 className="font-bold text-xs text-retro-cream group-hover:text-retro-gold transition-colors truncate">
                     {artist.name}
                   </h4>
                   {artist.hindiName && (
-                    <p className="text-[11px] text-retro-gold/80 truncate">
+                    <p className="text-[10px] text-retro-gold/80 truncate">
                       {artist.hindiName}
                     </p>
                   )}
-                  <p className="text-[10px] text-white/40 pt-1 truncate">
+                  <span className="inline-block text-[9px] px-1.5 py-0.5 rounded bg-white/5 text-white/50 mt-1 font-mono">
                     {artist.era}
-                  </p>
+                  </span>
                 </div>
               </button>
             ))}

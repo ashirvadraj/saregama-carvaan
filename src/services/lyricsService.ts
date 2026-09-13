@@ -71,7 +71,7 @@ export function calculateLineWords(line: LyricLine, nextLine?: LyricLine): WordS
   return wordSpans;
 }
 
-const LYRICS_CACHE_PREFIX = 'sunehre_geet_lyrics_v4_';
+const LYRICS_CACHE_PREFIX = 'carvaan_lyrics_v1_';
 
 function cleanTrackName(name: string): string {
   if (!name) return '';

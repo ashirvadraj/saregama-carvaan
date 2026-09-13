@@ -61,8 +61,8 @@ const GENERAL_SWEET_PHRASES = [
   'लता जी और मुकेश जी की आवाज़ का यह जादू कभी पुराना नहीं होता 🌹',
 ];
 
-const STORAGE_KEY_LAST_NOTIF = 'sunehre_geet_last_recommendation_time';
-const STORAGE_KEY_LAST_PHRASE = 'sunehre_geet_last_recommendation_phrase';
+const STORAGE_KEY_LAST_NOTIF = 'carvaan_last_recommendation_time';
+const STORAGE_KEY_LAST_PHRASE = 'carvaan_last_recommendation_phrase';
 const MIN_INTERVAL_MS = 2 * 60 * 60 * 1000; // Minimum 2 hours between automatic notifications
 
 export const RecommendationService = {
@@ -203,7 +203,7 @@ export const RecommendationService = {
         return false;
       }
 
-      const notifKey = `sunehre_wrapped_notif_${year}_${month}`;
+      const notifKey = `carvaan_wrapped_notif_${year}_${month}`;
       if (localStorage.getItem(notifKey)) {
         // Already notified this month
         return false;

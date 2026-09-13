@@ -191,7 +191,7 @@ export const WrappedService = {
       // Pull recent songs from localStorage
       let recentIds: string[] = [];
       try {
-        recentIds = JSON.parse(localStorage.getItem('sunehre_geet_recent') || '[]');
+        recentIds = JSON.parse(localStorage.getItem('carvaan_recent') || '[]');
       } catch {}
 
       // Top evergreen core song pool

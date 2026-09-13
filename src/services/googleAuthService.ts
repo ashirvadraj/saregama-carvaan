@@ -8,8 +8,8 @@ export interface GoogleUserProfile {
   lastLoginAt: number;
 }
 
-const STORAGE_KEY = 'sunehre_geet_google_session';
-const FIRST_TIME_KEY = 'sunehre_geet_has_seen_welcome';
+const STORAGE_KEY = 'carvaan_google_session';
+const FIRST_TIME_KEY = 'carvaan_has_seen_welcome';
 
 export function formatNameFromEmail(email: string): string {
   if (!email || !email.includes('@')) return 'Google User';
