@@ -1,17 +1,31 @@
 {
-  "name": "saregama-carvaan-app",
+  "name": "saregama-carvaan",
+  "private": true,
   "version": "1.0.0",
-  "description": "A standalone, vintage-styled mobile music player application engineered for the classic **Saregama Carvaan 5,000+ Songs collection**, featuring **Ameen Sayani's Binaca Geetmala**, Artist specials, real-time synchronized scrolling lyrics (Karaoke mode), and dual local/cloud streaming audio engines.",
-  "main": "app.js",
+  "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
   "dependencies": {
-    "@capacitor/android": "^8.5.2",
-    "@capacitor/cli": "^6.2.2",
-    "@capacitor/core": "^8.5.2"
+    "@capacitor/android": "^6.0.0",
+    "@capacitor/cli": "^6.0.0",
+    "@capacitor/core": "^6.0.0",
+    "crypto-js": "^4.2.0",
+    "lucide-react": "^0.344.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "devDependencies": {
+    "@types/crypto-js": "^4.2.2",
+    "@types/react": "^18.2.66",
+    "@types/react-dom": "^18.2.22",
+    "@vitejs/plugin-react": "^4.2.1",
+    "autoprefixer": "^10.4.18",
+    "postcss": "^8.4.35",
+    "tailwindcss": "^3.4.1",
+    "typescript": "^5.2.2",
+    "vite": "^5.1.6"
   }
 }
