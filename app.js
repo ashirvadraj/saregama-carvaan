@@ -15,7 +15,7 @@
     
     // Audio Source
     sourceType: localStorage.getItem('carvaan_source_type') || 'auto',
-    cloudBaseUrl: localStorage.getItem('carvaan_cloud_url') || '',
+    cloudBaseUrl: localStorage.getItem('carvaan_cloud_url') || 'https://archive.org/download/saregama-carvaan-5000-songs-collection',
     localDirectoryHandle: null,
     localFileMap: new Map(),
     
