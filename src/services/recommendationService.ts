@@ -57,7 +57,7 @@ const GENERAL_SWEET_PHRASES = [
   'मौसम का मिज़ाज है मस्ताना... सुनिए यह सदाबहार तराना 🍃🌸',
   'दिल को छू लेने वाली एक सुरीली धुन आपके लिए 📻',
   'एक प्यारा सा गीत, जो आपके चेहरे पर मुस्कान ला दे 😊',
-  'सुनहरे दौर का वो अमर गीत जो आज भी दिल धड़काता है 💖',
+  'सदाबहार दौर का वो अमर गीत जो आज भी दिल धड़काता है 💖',
   'लता जी और मुकेश जी की आवाज़ का यह जादू कभी पुराना नहीं होता 🌹',
 ];
 
@@ -218,7 +218,7 @@ export const RecommendationService = {
       const cap = (window as any).Capacitor;
       if (cap?.Plugins?.MediaNotificationPlugin?.sendSongRecommendation) {
         await cap.Plugins.MediaNotificationPlugin.sendSongRecommendation({
-          phrase: '✨ सुनहरे गीत रैप्ड (Sunehre Geet Wrapped)',
+          phrase: '✨ कारवां रैप्ड (Carvaan Wrapped)',
           songTitle: `${monthHindi} का आपका संगीत सफ़र तैयार है!`,
           songArtist: 'टैप करें और देखें आपने इस महीने कौनसे गीत सुने 📻',
           songId: 'open_wrapped',

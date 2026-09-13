@@ -20,7 +20,7 @@ import {
   Music2,
   Sparkles,
 } from 'lucide-react';
-import { useAudio } from '../context/AudioContext';
+import { useAudio, singletonAudio } from '../context/AudioContext';
 import { usePlaylists } from '../context/PlaylistContext';
 import { useDownload } from '../context/DownloadContext';
 import { fetchLyricsForSong, LyricsData, calculateLineWords } from '../services/lyricsService';
@@ -72,7 +72,11 @@ export const Player: React.FC<PlayerProps> = ({ onOpenSleepTimer }) => {
     let animFrameId: number;
     if (activeView === 'lyrics' && isPlaying) {
       const updateLyricsTimestamp = () => {
-        setLyricsCurrentTime(currentTime);
+        if (singletonAudio && typeof singletonAudio.currentTime === 'number' && !isNaN(singletonAudio.currentTime)) {
+          setLyricsCurrentTime(singletonAudio.currentTime);
+        } else {
+          setLyricsCurrentTime(currentTime);
+        }
         animFrameId = requestAnimationFrame(updateLyricsTimestamp);
       };
       animFrameId = requestAnimationFrame(updateLyricsTimestamp);
@@ -320,22 +324,22 @@ export const Player: React.FC<PlayerProps> = ({ onOpenSleepTimer }) => {
                         : 'text-white/60 font-medium hover:text-white/90'
                     }`}
                   >
-                    {isLineActive && lyricsData.isSynced ? (
+                    {isLineActive && lyricsData.isSynced && wordsWithTimings.length > 0 ? (
                       <div className="flex flex-wrap items-center justify-center gap-x-1.5 gap-y-1">
                         {wordsWithTimings.map((w, wIdx) => {
                           const isWordActive =
-                            calibratedLyricsTime >= w.startTime && calibratedLyricsTime <= w.endTime + 0.1;
-                          const isWordPast = calibratedLyricsTime > w.endTime + 0.1;
+                            calibratedLyricsTime >= w.startTime && calibratedLyricsTime <= w.endTime + 0.05;
+                          const isWordPast = calibratedLyricsTime > w.endTime + 0.05;
 
                           return (
                             <span
                               key={wIdx}
-                              className={`transition-all duration-150 inline-block ${
+                              className={`transition-all duration-150 inline-block px-1 py-0.5 rounded-lg ${
                                 isWordActive
-                                  ? 'text-amber-200 scale-110 drop-shadow-[0_0_8px_rgba(251,191,36,0.9)]'
+                                  ? 'text-amber-200 scale-110 font-black drop-shadow-[0_0_12px_rgba(251,191,36,0.95)] bg-amber-400/20'
                                   : isWordPast
-                                  ? 'text-retro-gold opacity-90'
-                                  : 'text-retro-gold/60'
+                                  ? 'text-retro-gold font-bold opacity-90'
+                                  : 'text-retro-gold/50 font-medium'
                               }`}
                             >
                               {w.word}

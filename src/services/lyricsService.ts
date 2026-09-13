@@ -22,32 +22,50 @@ export interface LyricsData {
 /**
  * Splits a lyrical line into natural cadence timed word spans for Apple Music karaoke animation
  */
-export function calculateLineWords(line: LyricLine, nextLine?: LyricLine): WordSpan[] {
-  const text = (line?.text || '').trim();
+export function calculateLineWords(
+  lineOrText: LyricLine | string,
+  nextLineOrStartTime?: LyricLine | number,
+  duration?: number
+): WordSpan[] {
+  let text = '';
+  let lineStart = 0;
+  let lineGap = 4.0;
+
+  if (typeof lineOrText === 'string') {
+    text = (lineOrText || '').trim();
+    lineStart = typeof nextLineOrStartTime === 'number' ? nextLineOrStartTime : 0;
+    lineGap = typeof duration === 'number' && duration > 0 ? duration : 4.0;
+  } else if (lineOrText && typeof lineOrText === 'object') {
+    text = (lineOrText.text || '').trim();
+    lineStart = lineOrText.time || 0;
+    if (nextLineOrStartTime && typeof nextLineOrStartTime === 'object') {
+      lineGap = Math.max(0.6, nextLineOrStartTime.time - lineStart);
+    } else if (typeof duration === 'number' && duration > 0) {
+      lineGap = duration;
+    }
+  }
+
   if (!text) return [];
 
   const wordsOnly = text.split(/\s+/).filter((w) => w.length > 0);
   const numWords = wordsOnly.length;
   if (numWords === 0) return [];
 
-  const lineStart = line.time;
-  const rawGap = nextLine ? Math.max(0.6, nextLine.time - lineStart) : numWords * 0.65;
-
   // Realistic human vocal cadence:
   // In songs with instrumental trailing pauses or interludes, vocals typically occupy
-  // ~65-80% of the gap, capped at ~0.55s - 0.75s per word.
+  // ~70-85% of the gap, capped at ~0.55s - 0.75s per word.
   const estimatedVocalDuration = Math.max(1.4, numWords * 0.62);
 
   let effectiveDuration: number;
-  if (rawGap <= estimatedVocalDuration * 1.15) {
+  if (lineGap <= estimatedVocalDuration * 1.15) {
     // Tight line spacing -> vocals take almost the entire line
-    effectiveDuration = rawGap * 0.92;
+    effectiveDuration = lineGap * 0.94;
   } else {
     // Generous gap -> vocals finish naturally, leaving room for trailing melody
-    effectiveDuration = Math.min(rawGap * 0.75, estimatedVocalDuration * 1.1);
+    effectiveDuration = Math.min(lineGap * 0.8, estimatedVocalDuration * 1.15);
   }
 
-  effectiveDuration = Math.max(1.0, Math.min(effectiveDuration, 8.5));
+  effectiveDuration = Math.max(0.8, Math.min(effectiveDuration, 12.0));
 
   const totalWeight = wordsOnly.reduce((acc, w) => acc + Math.max(1, w.length), 0);
 
@@ -402,8 +420,15 @@ function raceForFirstValid(promises: Promise<LyricsData | null>[]): Promise<Lyri
   });
 }
 
-export async function fetchLyricsForSong(song: Song): Promise<LyricsData | null> {
+export async function fetchLyricsForSong(song: Song, forceRefresh: boolean = false): Promise<LyricsData | null> {
   if (!song || !song.title) return null;
+
+  const cacheKey = `${LYRICS_CACHE_PREFIX}${song.id}`;
+
+  if (forceRefresh) {
+    IN_MEMORY_LYRICS_CACHE.delete(song.id);
+    try { localStorage.removeItem(cacheKey); } catch {}
+  }
 
   // 1. Direct song object lyrics
   if (song.lyrics && song.lyrics.trim().length > 10) {
@@ -411,23 +436,23 @@ export async function fetchLyricsForSong(song: Song): Promise<LyricsData | null>
   }
 
   // 2. Ultra-Fast In-Memory Cache (0ms instant response)
-  if (IN_MEMORY_LYRICS_CACHE.has(song.id)) {
+  if (!forceRefresh && IN_MEMORY_LYRICS_CACHE.has(song.id)) {
     return IN_MEMORY_LYRICS_CACHE.get(song.id)!;
   }
 
-  const cacheKey = `${LYRICS_CACHE_PREFIX}${song.id}`;
-
   // 3. LocalStorage Cache (Instant)
-  try {
-    const cached = localStorage.getItem(cacheKey);
-    if (cached) {
-      const parsed = JSON.parse(cached);
-      if (parsed && Array.isArray(parsed.lines) && parsed.lines.length > 0) {
-        IN_MEMORY_LYRICS_CACHE.set(song.id, parsed);
-        return parsed;
+  if (!forceRefresh) {
+    try {
+      const cached = localStorage.getItem(cacheKey);
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        if (parsed && Array.isArray(parsed.lines) && parsed.lines.length > 0) {
+          IN_MEMORY_LYRICS_CACHE.set(song.id, parsed);
+          return parsed;
+        }
       }
-    }
-  } catch {}
+    } catch {}
+  }
 
   const cleanTitle = cleanTrackName(song.title);
   const cleanArtist = (song.artist || '').split(',')[0].split(/\s+ft\.?\s+/i)[0].split(/\s+feat\.?\s+/i)[0].split(' - ')[0].split(' & ')[0].trim();

@@ -7,7 +7,7 @@ export interface VersionConfig {
   message_english: string;
 }
 
-export const CURRENT_APP_VERSION = 1.1;
+export const CURRENT_APP_VERSION = 1.2;
 
 const CLOUD_GIST_ID = 'a62d2ce04fb2cad264471951a42790da';
 const RAW_GIST_URL = `https://gist.githubusercontent.com/ashirvadraj/${CLOUD_GIST_ID}/raw/app_version_config.json`;

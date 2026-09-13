@@ -18,7 +18,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenSleepTimer }) => {
         <div className="relative w-11 h-11 rounded-2xl overflow-hidden p-0.5 bg-gradient-to-tr from-retro-gold via-amber-500 to-amber-700 shadow-md shadow-retro-gold/20 flex-shrink-0">
           <img
             src="/logo.png"
-            alt="सुनहरे गीत"
+            alt="सारेगामा कारवां"
             className="w-full h-full object-cover rounded-[14px]"
           />
         </div>

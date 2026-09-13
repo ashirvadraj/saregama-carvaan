@@ -176,7 +176,7 @@ export const WrappedModal: React.FC<WrappedModalProps> = ({ isOpen, onClose }) =
           <div className="flex items-center gap-2">
             <span className="text-xs font-bold text-amber-400 font-serif flex items-center gap-1">
               <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-              <span>सुनहरे गीत रैप्ड</span>
+              <span>कारवां रैप्ड</span>
             </span>
 
             {/* Mode Switcher */}

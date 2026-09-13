@@ -30,12 +30,12 @@ export const WrappedBanner: React.FC<WrappedBannerProps> = ({
         <div className="space-y-1 flex-1 min-w-0">
           <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-gradient-to-r from-amber-500/20 to-rose-500/20 text-amber-300 text-[10px] font-bold tracking-wider uppercase border border-amber-500/30">
             <Sparkles className="w-3 h-3 text-amber-400 animate-pulse" />
-            <span>सुनहरे गीत रैप्ड • SUNEHRE GEET WRAPPED</span>
+            <span>कारवां रैप्ड • CARVAAN WRAPPED</span>
           </div>
 
           <h3 className="text-sm sm:text-base font-bold text-[#FFF4E0] font-serif leading-snug truncate">
             {periodType === 'yearly'
-              ? `${currentYear} सुनहरे गीत रैप्ड (Yearly Wrapped)`
+              ? `${currentYear} कारवां रैप्ड (Yearly Wrapped)`
               : `${currentMonthHindi} का संगीत सफ़र (${currentMonthName} Wrapped)`}
           </h3>
 

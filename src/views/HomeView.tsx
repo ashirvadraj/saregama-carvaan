@@ -383,7 +383,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
           </div>
           <div>
             <h3 className="font-serif font-bold text-sm sm:text-base text-retro-cream leading-tight">
-              सुनहरे दशक एवं गीतमाला (Golden Eras)
+              सदाबहार दशक एवं गीतमाला (Golden Eras)
             </h3>
             <p className="text-[10px] text-white/50">
               1950 के क्लासिक्स से लेकर बिनाका गीतमाला तक
