@@ -1,4 +1,4 @@
-﻿// Saregama Carvaan - Universal Audio & Lyrics Engine
+﻿// Saregama Carvaan - Luxury Hi-Fi Audio & Synced Lyrics Engine
 
 (function() {
   const state = {
@@ -8,13 +8,12 @@
     currentSong: null,
     isPlaying: false,
     isShuffle: false,
-    currentMode: 'all',
+    currentMode: 'all', // 'all', 'artists', 'geetmala', 'interviews', 'favorites'
     currentArtist: 'ALL',
     searchQuery: '',
     favorites: JSON.parse(localStorage.getItem('carvaan_favs') || '[]'),
     
-    // Audio Source
-    sourceType: localStorage.getItem('carvaan_source_type') || 'auto',
+    // Audio Source (Default: Archive.org 0MB Cloud Stream)
     cloudBaseUrl: localStorage.getItem('carvaan_cloud_url') || 'https://archive.org/download/saregama-carvaan-5000-songs-collection',
     localDirectoryHandle: null,
     localFileMap: new Map(),
@@ -24,69 +23,95 @@
     currentLyricIndex: -1
   };
 
+  const ARTIST_ROSTER = [
+    { name: "ALL", label: "All Artists", icon: "fa-music" },
+    { name: "Kishore Kumar", label: "Kishore", icon: "fa-microphone" },
+    { name: "Lata Mangeshkar", label: "Lata", icon: "fa-star" },
+    { name: "Mohammed Rafi", label: "Rafi", icon: "fa-compact-disc" },
+    { name: "Mukesh", label: "Mukesh", icon: "fa-heart" },
+    { name: "Asha Bhosle", label: "Asha", icon: "fa-wand-magic-sparkles" },
+    { name: "R.D. Burman", label: "Pancham", icon: "fa-guitar" },
+    { name: "Ameen Sayani", label: "Geetmala", icon: "fa-radio" },
+    { name: "Jagjit Singh", label: "Jagjit", icon: "fa-feather" }
+  ];
+
   // DOM Elements
   const audio = document.getElementById('audio-engine');
   const songListEl = document.getElementById('song-list');
   const searchInput = document.getElementById('search-input');
   const btnClearSearch = document.getElementById('btn-clear-search');
-  const playlistCountEl = document.getElementById('playlist-count');
+  const catalogCountBadge = document.getElementById('catalog-count-badge');
+  const btnPlayAllShuffled = document.getElementById('btn-play-all-shuffled');
   
   const playIcon = document.getElementById('play-icon');
   const btnPlayPause = document.getElementById('btn-play-pause');
   const btnNext = document.getElementById('btn-next');
   const btnPrev = document.getElementById('btn-prev');
   const btnShuffle = document.getElementById('btn-shuffle');
+  const btnFavCurrent = document.getElementById('btn-fav-current');
+  const heroFavIcon = document.getElementById('hero-fav-icon');
+  
   const seekBar = document.getElementById('seek-bar');
+  const currentTimeEl = document.getElementById('current-time');
+  const totalDurationEl = document.getElementById('total-duration');
   
-  const currentTitleEl = document.getElementById('current-song-title');
-  const currentArtistEl = document.getElementById('current-song-artist');
-  const trackNumEl = document.getElementById('lcd-track-num');
-  const currentTimeEl = document.getElementById('lcd-current-time');
-  const modeBadgeEl = document.getElementById('lcd-mode-badge');
-  const vinylIcon = document.getElementById('vinyl-icon');
-  const rotaryDial = document.getElementById('rotary-dial');
+  const trackTitleEl = document.getElementById('track-title');
+  const trackArtistEl = document.getElementById('track-artist');
+  const oledChannelEl = document.getElementById('oled-channel-badge');
+  const oledModeEl = document.getElementById('oled-mode-badge');
+  const oledEq = document.getElementById('oled-eq');
   
+  const vinylDisc = document.getElementById('vinyl-disc');
+  const tonearm = document.getElementById('tonearm');
+  const rotaryKnob = document.getElementById('rotary-knob');
+  const artistAvatarsContainer = document.getElementById('artist-avatars');
   const lyricsContainer = document.getElementById('lyrics-container');
+  
   const sourceModal = document.getElementById('source-modal');
   const btnSource = document.getElementById('btn-source');
   const btnCloseModal = document.getElementById('btn-close-modal');
   const btnPickFolder = document.getElementById('btn-pick-folder');
-  const btnSaveCloud = document.getElementById('btn-save-cloud');
-  const cloudUrlInput = document.getElementById('cloud-url-input');
-  const localStatus = document.getElementById('local-status');
-  const sourceLabel = document.getElementById('source-label');
-
-  // Hidden Universal File Input for all browsers
-  let hiddenFolderInput = document.getElementById('hidden-folder-input');
-  if (!hiddenFolderInput) {
-    hiddenFolderInput = document.createElement('input');
-    hiddenFolderInput.type = 'file';
-    hiddenFolderInput.id = 'hidden-folder-input';
-    hiddenFolderInput.setAttribute('webkitdirectory', '');
-    hiddenFolderInput.setAttribute('directory', '');
-    hiddenFolderInput.setAttribute('multiple', '');
-    hiddenFolderInput.style.display = 'none';
-    document.body.appendChild(hiddenFolderInput);
-  }
+  const localStatusMsg = document.getElementById('local-status-msg');
 
   // INIT
   function init() {
     state.filteredList = [...state.catalog];
+    renderArtistAvatars();
     renderSongList();
     bindEvents();
     setupMediaSession();
     updateLcdMode();
-    checkSavedConfig();
   }
 
-  function checkSavedConfig() {
-    if (state.cloudBaseUrl) {
-      cloudUrlInput.value = state.cloudBaseUrl;
-      sourceLabel.textContent = "Cloud Mode";
-    }
+  // RENDER ARTIST SPOTLIGHT CHIPS
+  function renderArtistAvatars() {
+    artistAvatarsContainer.innerHTML = '';
+    const fragment = document.createDocumentFragment();
+
+    ARTIST_ROSTER.forEach(artist => {
+      const card = document.createElement('div');
+      card.className = `artist-card ${state.currentArtist === artist.name ? 'active' : ''}`;
+      card.innerHTML = `
+        <div class="avatar-ring">
+          <i class="fa-solid ${artist.icon}"></i>
+        </div>
+        <span class="artist-name-label">${artist.label}</span>
+      `;
+
+      card.addEventListener('click', () => {
+        document.querySelectorAll('.artist-card').forEach(c => c.classList.remove('active'));
+        card.classList.add('active');
+        state.currentArtist = artist.name;
+        applyFilters();
+      });
+
+      fragment.appendChild(card);
+    });
+
+    artistAvatarsContainer.appendChild(fragment);
   }
 
-  // EVENT BINDINGS
+  // BIND ALL EVENTS
   function bindEvents() {
     btnPlayPause.addEventListener('click', togglePlayPause);
     btnNext.addEventListener('click', playNext);
@@ -97,41 +122,53 @@
       btnShuffle.classList.toggle('active', state.isShuffle);
     });
 
-    // Rotary Dial Interaction
-    let dialRotation = 0;
-    rotaryDial.addEventListener('click', () => {
-      dialRotation += 60;
-      rotaryDial.style.transform = `rotate(${dialRotation}deg)`;
+    btnPlayAllShuffled.addEventListener('click', () => {
+      state.isShuffle = true;
+      btnShuffle.classList.add('active');
       playNext();
     });
 
-    // Seek Bar
+    btnFavCurrent.addEventListener('click', () => {
+      if (state.currentSong) {
+        toggleFavorite(state.currentSong.id);
+        updateHeroFavIcon();
+      }
+    });
+
+    // Rotary Knob Interactive Tuning
+    let knobDeg = 0;
+    rotaryKnob.addEventListener('click', () => {
+      knobDeg += 45;
+      rotaryKnob.style.transform = `rotate(${knobDeg}deg)`;
+      playNext();
+    });
+
+    // Seek Bar Scrubbing
     seekBar.addEventListener('input', () => {
       if (audio.duration) {
         audio.currentTime = (seekBar.value / 100) * audio.duration;
       }
     });
 
-    // Audio Engine Events
+    // Audio Engine Handlers
     audio.addEventListener('timeupdate', onTimeUpdate);
     audio.addEventListener('ended', onSongEnded);
     audio.addEventListener('play', () => {
       state.isPlaying = true;
       playIcon.className = 'fa-solid fa-pause';
-      vinylIcon.classList.add('playing');
+      vinylDisc.classList.add('spinning');
+      tonearm.classList.add('on-record');
+      oledEq.classList.add('active');
     });
     audio.addEventListener('pause', () => {
       state.isPlaying = false;
       playIcon.className = 'fa-solid fa-play';
-      vinylIcon.classList.remove('playing');
+      vinylDisc.classList.remove('spinning');
+      tonearm.classList.remove('on-record');
+      oledEq.classList.remove('active');
     });
 
-    audio.addEventListener('error', (e) => {
-      console.warn("Audio playback error:", audio.error);
-      showAudioSourcePrompt();
-    });
-
-    // Search
+    // Search Input
     searchInput.addEventListener('input', (e) => {
       state.searchQuery = e.target.value.toLowerCase().trim();
       btnClearSearch.style.display = state.searchQuery ? 'block' : 'none';
@@ -145,10 +182,10 @@
       applyFilters();
     });
 
-    // Mode Toggles
-    document.querySelectorAll('.mode-btn').forEach(btn => {
+    // Channel Pills (Mode Toggles)
+    document.querySelectorAll('.channel-pill').forEach(btn => {
       btn.addEventListener('click', () => {
-        document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.channel-pill').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
         state.currentMode = btn.dataset.mode;
         updateLcdMode();
@@ -156,69 +193,29 @@
       });
     });
 
-    // Artist Chips
-    document.querySelectorAll('.chip').forEach(chip => {
-      chip.addEventListener('click', () => {
-        document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
-        chip.classList.add('active');
-        state.currentArtist = chip.dataset.artist;
-        applyFilters();
-      });
-    });
-
-    // Source Modal
+    // Settings Modal
     btnSource.addEventListener('click', () => sourceModal.classList.add('open'));
     btnCloseModal.addEventListener('click', () => sourceModal.classList.remove('open'));
     
-    // Pick Folder via Native File Input
-    btnPickFolder.addEventListener('click', () => {
-      if ('showDirectoryPicker' in window && window.isSecureContext) {
-        pickDirectoryModern();
-      } else {
-        hiddenFolderInput.click();
+    // Pick Local Folder
+    btnPickFolder.addEventListener('click', async () => {
+      try {
+        if ('showDirectoryPicker' in window && window.isSecureContext) {
+          const dirHandle = await window.showDirectoryPicker();
+          state.localDirectoryHandle = dirHandle;
+          state.localFileMap.clear();
+          await scanDirectoryHandle(dirHandle);
+          const count = state.localFileMap.size;
+          localStatusMsg.textContent = `Linked ${count} files from "${dirHandle.name}"`;
+          sourceModal.classList.remove('open');
+          if (state.currentSong) playSong(state.currentSong);
+        } else {
+          alert("To use local storage mode, open the app over HTTPS or use the default 24/7 Cloud Streaming.");
+        }
+      } catch (err) {
+        console.warn("Folder picker note:", err);
       }
     });
-
-    hiddenFolderInput.addEventListener('change', (e) => {
-      loadFilesFromList(e.target.files);
-    });
-
-    btnSaveCloud.addEventListener('click', () => {
-      const url = cloudUrlInput.value.trim().replace(/\/+$/, '');
-      if (url) {
-        state.cloudBaseUrl = url;
-        state.sourceType = 'cloud';
-        localStorage.setItem('carvaan_cloud_url', url);
-        localStorage.setItem('carvaan_source_type', 'cloud');
-        sourceLabel.textContent = "Cloud Mode";
-        sourceModal.classList.remove('open');
-        if (state.currentSong) playSong(state.currentSong);
-      }
-    });
-  }
-
-  async function pickDirectoryModern() {
-    try {
-      const dirHandle = await window.showDirectoryPicker();
-      state.localDirectoryHandle = dirHandle;
-      
-      // Index all files in directory
-      state.localFileMap.clear();
-      await scanDirectoryHandle(dirHandle);
-      
-      const count = state.localFileMap.size;
-      localStatus.textContent = `Linked ${count} audio files from "${dirHandle.name}"`;
-      localStatus.style.color = '#50e37b';
-      sourceLabel.textContent = `Linked (${count})`;
-      sourceModal.classList.remove('open');
-
-      if (state.currentSong) {
-        playSong(state.currentSong);
-      }
-    } catch (err) {
-      console.warn("Modern directory picker fallback:", err);
-      hiddenFolderInput.click();
-    }
   }
 
   async function scanDirectoryHandle(dirHandle, path = "") {
@@ -232,36 +229,6 @@
         await scanDirectoryHandle(entry, `${path}${entry.name}/`);
       }
     }
-  }
-
-  function loadFilesFromList(fileList) {
-    if (!fileList || fileList.length === 0) return;
-    state.localFileMap.clear();
-
-    for (let i = 0; i < fileList.length; i++) {
-      const file = fileList[i];
-      const name = file.name.toLowerCase();
-      if (name.endsWith('.mp3') || name.endsWith('.m4a') || name.endsWith('.flac') || name.endsWith('.wav')) {
-        state.localFileMap.set(name, file);
-      }
-    }
-
-    const count = state.localFileMap.size;
-    localStatus.textContent = `Loaded ${count} audio files successfully!`;
-    localStatus.style.color = '#50e37b';
-    sourceLabel.textContent = `Loaded (${count})`;
-    sourceModal.classList.remove('open');
-
-    if (state.currentSong) {
-      playSong(state.currentSong);
-    } else if (state.filteredList.length > 0) {
-      playSong(state.filteredList[0]);
-    }
-  }
-
-  function showAudioSourcePrompt() {
-    sourceModal.classList.add('open');
-    localStatus.innerHTML = `<span style="color:#ff6b6b; font-weight:bold;">⚠️ Audio link required: Please click "Link Carvaan Folder" below and select your <code>I:\\carvaan</code> folder (or phone Music folder).</span>`;
   }
 
   // FILTERING LOGIC
@@ -291,7 +258,7 @@
     }
 
     state.filteredList = list;
-    playlistCountEl.textContent = `Showing ${list.length.toLocaleString()} Songs`;
+    catalogCountBadge.textContent = `${list.length.toLocaleString()} Songs Available`;
     renderSongList();
   }
 
@@ -300,100 +267,97 @@
     songListEl.innerHTML = '';
     
     if (state.filteredList.length === 0) {
-      songListEl.innerHTML = `<div style="text-align:center; padding:30px; color:#888;">No songs found matching criteria</div>`;
+      songListEl.innerHTML = `<div style="text-align:center; padding:40px 10px; color:#777;"><i class="fa-solid fa-magnifying-glass fa-2x" style="margin-bottom:10px; opacity:0.4;"></i><p>No songs found matching your filter</p></div>`;
       return;
     }
 
     const fragment = document.createDocumentFragment();
-    const renderLimit = Math.min(state.filteredList.length, 150);
+    const renderLimit = Math.min(state.filteredList.length, 120);
 
     for (let i = 0; i < renderLimit; i++) {
       const song = state.filteredList[i];
       const isCurrent = state.currentSong && state.currentSong.id === song.id;
       const isFav = state.favorites.includes(song.id);
 
-      const item = document.createElement('div');
-      item.className = `song-item ${isCurrent ? 'active' : ''}`;
-      item.innerHTML = `
-        <div class="song-info">
-          <div class="song-title">${song.title}</div>
-          <div class="song-sub"><i class="fa-solid fa-microphone"></i> ${song.artist} • ${song.category}</div>
+      const card = document.createElement('div');
+      card.className = `song-card ${isCurrent ? 'active' : ''}`;
+      card.innerHTML = `
+        <div class="card-left">
+          <div class="card-index">${String(song.id).padStart(4, '0')}</div>
+          <div class="card-info">
+            <div class="card-title">${song.title}</div>
+            <div class="card-sub"><i class="fa-solid fa-microphone"></i> ${song.artist} • ${song.category}</div>
+          </div>
         </div>
-        <div class="song-actions">
-          <button class="fav-btn ${isFav ? 'active' : ''}" data-id="${song.id}">
+        <div class="card-right">
+          <button class="fav-action-btn ${isFav ? 'active' : ''}" data-id="${song.id}">
             <i class="fa-${isFav ? 'solid' : 'regular'} fa-heart"></i>
           </button>
         </div>
       `;
 
-      item.addEventListener('click', (e) => {
-        if (e.target.closest('.fav-btn')) return;
+      card.addEventListener('click', (e) => {
+        if (e.target.closest('.fav-action-btn')) return;
         playSong(song);
       });
 
-      const favBtn = item.querySelector('.fav-btn');
+      const favBtn = card.querySelector('.fav-action-btn');
       favBtn.addEventListener('click', (e) => {
         e.stopPropagation();
-        toggleFavorite(song.id, favBtn);
+        toggleFavorite(song.id);
+        favBtn.classList.toggle('active', state.favorites.includes(song.id));
+        favBtn.innerHTML = `<i class="fa-${state.favorites.includes(song.id) ? 'solid' : 'regular'} fa-heart"></i>`;
+        updateHeroFavIcon();
       });
 
-      fragment.appendChild(item);
+      fragment.appendChild(card);
     }
 
     songListEl.appendChild(fragment);
   }
 
-  // PLAY AUDIO
+  // PLAY SONG WITH DIRECT CLOUD STREAMING
   async function playSong(song) {
     state.currentSong = song;
     state.currentSongIndex = state.filteredList.findIndex(s => s.id === song.id);
 
     // Update Display
-    currentTitleEl.textContent = song.title;
-    currentArtistEl.textContent = `${song.artist} • ${song.category}`;
-    trackNumEl.textContent = `CH ${String(song.id).padStart(4, '0')}`;
+    trackTitleEl.textContent = song.title;
+    trackArtistEl.textContent = `${song.artist} • ${song.category}`;
+    oledChannelEl.textContent = `CH ${String(song.id).padStart(4, '0')}`;
+    updateHeroFavIcon();
 
-    // Highlight in list
-    document.querySelectorAll('.song-item').forEach(el => el.classList.remove('active'));
+    // Highlight active card
+    document.querySelectorAll('.song-card').forEach(el => el.classList.remove('active'));
     renderSongList();
 
     let audioSrc = null;
     const cleanFileName = (song.filename || "").toLowerCase();
 
-    // 1. Check in-memory local file map
+    // 1. Local storage check
     if (state.localFileMap.has(cleanFileName)) {
-      const fileOrHandle = state.localFileMap.get(cleanFileName);
-      if (fileOrHandle instanceof File) {
-        audioSrc = URL.createObjectURL(fileOrHandle);
-      } else if (fileOrHandle.getFile) {
-        const file = await fileOrHandle.getFile();
+      const entry = state.localFileMap.get(cleanFileName);
+      if (entry.getFile) {
+        const file = await entry.getFile();
         audioSrc = URL.createObjectURL(file);
       }
     } 
-    // 2. Check Cloud URL if configured
+    // 2. Direct Archive.org 0MB Cloud Streaming
     else if (state.cloudBaseUrl) {
       const parts = (song.relPath || '').split('/').map(p => encodeURIComponent(p));
       audioSrc = `${state.cloudBaseUrl.replace(/\/+$/, '')}/${parts.join('/')}`;
-    } 
-    // 3. Check Local Web Server (when running python server.py)
-    else if (window.location.protocol.startsWith('http')) {
-      audioSrc = `audio/${encodeURIComponent(song.relPath)}`;
     }
 
-    if (!audioSrc) {
-      showAudioSourcePrompt();
-      fetchAndDisplayLyrics(song);
-      return;
+    if (audioSrc) {
+      audio.src = audioSrc;
+      try {
+        await audio.play();
+      } catch (e) {
+        console.log("Audio start notice:", e);
+      }
     }
 
-    audio.src = audioSrc;
-    try {
-      await audio.play();
-    } catch (e) {
-      console.log("Playback start note:", e);
-    }
-
-    // Load Synced Lyrics
+    // Synchronize Karaoke Lyrics
     fetchAndDisplayLyrics(song);
   }
 
@@ -403,7 +367,7 @@
       return;
     }
     if (audio.paused) {
-      audio.play().catch(() => showAudioSourcePrompt());
+      audio.play().catch(e => console.log(e));
     } else {
       audio.pause();
     }
@@ -430,17 +394,16 @@
     playNext();
   }
 
-  // TIME & SEEK & LYRICS SYNC
+  // TIME & LYRICS SYNC
   function onTimeUpdate() {
     if (!audio.duration) return;
-    
     const cur = audio.currentTime;
     const dur = audio.duration;
     
     seekBar.value = (cur / dur) * 100;
-    currentTimeEl.textContent = `${formatTime(cur)} / ${formatTime(dur)}`;
+    currentTimeEl.textContent = formatTime(cur);
+    totalDurationEl.textContent = formatTime(dur);
 
-    // Sync Lyrics
     if (state.lyrics.length > 0) {
       let activeIndex = -1;
       for (let i = 0; i < state.lyrics.length; i++) {
@@ -459,16 +422,17 @@
   }
 
   function formatTime(secs) {
+    if (isNaN(secs)) return "00:00";
     const m = Math.floor(secs / 60);
     const s = Math.floor(secs % 60);
     return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
   }
 
-  // LYRICS ENGINE
+  // KARAOKE LYRICS ENGINE
   async function fetchAndDisplayLyrics(song) {
     state.lyrics = [];
     state.currentLyricIndex = -1;
-    lyricsContainer.innerHTML = `<div class="lyrics-placeholder"><i class="fa-solid fa-spinner fa-spin"></i><p>Synchronizing lyrics for "${song.title}"...</p></div>`;
+    lyricsContainer.innerHTML = `<div class="lyrics-empty-state"><i class="fa-solid fa-spinner fa-spin fa-2x" style="color:var(--gold-primary);"></i><p>Synchronizing karaoke lyrics for "${song.title}"...</p></div>`;
 
     try {
       const cleanTitle = song.title.replace(/[_\d\-]/g, ' ').trim();
@@ -484,14 +448,13 @@
         return;
       }
     } catch (e) {
-      console.log("Online lyrics fetch fallback:", e);
+      console.log("Online lyrics note:", e);
     }
 
-    // Fallback: Display title & artist sing-along cards
     lyricsContainer.innerHTML = `
-      <div class="lyrics-line active">🎵 ${song.title}</div>
-      <div class="lyrics-line">🎙️ Artist: ${song.artist}</div>
-      <div class="lyrics-line">📻 Saregama Carvaan Vintage Collection</div>
+      <div class="lyric-item active">🎵 ${song.title}</div>
+      <div class="lyric-item">🎙️ Singer: ${song.artist}</div>
+      <div class="lyric-item">📻 Collection: Saregama Carvaan 5000 Gold Edition</div>
     `;
   }
 
@@ -522,7 +485,7 @@
 
     state.lyrics.forEach((l, index) => {
       const lineEl = document.createElement('div');
-      lineEl.className = 'lyrics-line';
+      lineEl.className = 'lyric-item';
       lineEl.id = `lyric-${index}`;
       lineEl.textContent = l.text;
       
@@ -537,7 +500,7 @@
   }
 
   function highlightActiveLyric(index) {
-    document.querySelectorAll('.lyrics-line').forEach(el => el.classList.remove('active'));
+    document.querySelectorAll('.lyric-item').forEach(el => el.classList.remove('active'));
     const activeEl = document.getElementById(`lyric-${index}`);
     if (activeEl) {
       activeEl.classList.add('active');
@@ -545,29 +508,36 @@
     }
   }
 
-  function toggleFavorite(id, btn) {
+  // FAVORITES
+  function toggleFavorite(id) {
     const idx = state.favorites.indexOf(id);
     if (idx > -1) {
       state.favorites.splice(idx, 1);
-      btn.classList.remove('active');
-      btn.innerHTML = '<i class="fa-regular fa-heart"></i>';
     } else {
       state.favorites.push(id);
-      btn.classList.add('active');
-      btn.innerHTML = '<i class="fa-solid fa-heart"></i>';
     }
     localStorage.setItem('carvaan_favs', JSON.stringify(state.favorites));
   }
 
+  function updateHeroFavIcon() {
+    if (state.currentSong && state.favorites.includes(state.currentSong.id)) {
+      btnFavCurrent.classList.add('favorited');
+      heroFavIcon.className = 'fa-solid fa-heart';
+    } else {
+      btnFavCurrent.classList.remove('favorited');
+      heroFavIcon.className = 'fa-regular fa-heart';
+    }
+  }
+
   function updateLcdMode() {
     const modeNames = {
-      'all': 'ALL 5000 SONGS',
-      'artists': 'ARTIST SPECIAL',
+      'all': 'ALL 5,000 CLASSICS',
+      'artists': 'ARTIST SPOTLIGHT',
       'geetmala': 'BINACA GEETMALA',
       'interviews': 'AMEEN SAYANI INTERVIEWS',
       'favorites': 'MY FAVORITES'
     };
-    modeBadgeEl.innerHTML = `<i class="fa-solid fa-radio"></i> ${modeNames[state.currentMode] || 'CARVAAN'}`;
+    oledModeEl.innerHTML = `<i class="fa-solid fa-tower-broadcast"></i> ${modeNames[state.currentMode] || 'CARVAAN'}`;
   }
 
   function setupMediaSession() {

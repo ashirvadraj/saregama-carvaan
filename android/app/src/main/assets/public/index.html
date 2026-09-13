@@ -3,177 +3,203 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <meta name="theme-color" content="#1a120b">
+  <meta name="theme-color" content="#080706">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <title>Saregama Carvaan - 5000 Songs & Lyrics</title>
+  <title>Saregama Carvaan - Gold Edition</title>
   <link rel="manifest" href="manifest.json">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&family=Orbitron:wght@500;700;900&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;900&family=Orbitron:wght@500;700;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <link rel="stylesheet" href="style.css">
 </head>
-<body class="theme-vintage">
-  <div class="app-container">
+<body>
+  <div class="app-shell">
     
-    <!-- CARVAAN TOP BAR -->
-    <header class="carvaan-header">
-      <div class="brand-logo">
-        <span class="brand-sub">SAREGAMA</span>
-        <span class="brand-main">CARVAAN</span>
-        <span class="brand-edition">5000 SONGS EDITION</span>
+    <!-- BACKGROUND AMBIENCE -->
+    <div class="ambient-glow" id="ambient-glow"></div>
+
+    <!-- TOP NAV -->
+    <header class="luxury-header">
+      <div class="brand-group">
+        <div class="brand-crest">
+          <i class="fa-solid fa-compact-disc"></i>
+        </div>
+        <div class="brand-text">
+          <span class="brand-top">SAREGAMA</span>
+          <span class="brand-title">CARVAAN</span>
+          <span class="brand-badge">5000 GOLD EDITION</span>
+        </div>
       </div>
-      <div class="header-actions">
-        <button id="btn-source" class="pill-btn" title="Choose Music Source">
-          <i class="fa-solid fa-folder-open"></i> <span id="source-label">Set Folder</span>
-        </button>
-        <button id="btn-theme" class="icon-btn" title="Toggle Theme">
-          <i class="fa-solid fa-circle-half-stroke"></i>
+      <div class="header-right">
+        <div class="cloud-status-pill" id="cloud-status-badge">
+          <span class="pulse-dot"></span>
+          <span id="cloud-status-text">Cloud Stream Active</span>
+        </div>
+        <button id="btn-source" class="glass-icon-btn" title="Audio Source Settings">
+          <i class="fa-solid fa-sliders"></i>
         </button>
       </div>
     </header>
 
-    <!-- CARVAAN MAIN CHASSIS -->
-    <main class="carvaan-chassis">
-      
-      <!-- RETRO DISPLAY PANEL -->
-      <div class="lcd-display-panel">
-        <div class="lcd-header">
-          <span class="lcd-badge" id="lcd-mode-badge"><i class="fa-solid fa-radio"></i> GEETMALA</span>
-          <span class="lcd-eq" id="lcd-eq-anim">
-            <span></span><span></span><span></span><span></span><span></span>
-          </span>
-          <span class="lcd-time" id="lcd-current-time">00:00 / 00:00</span>
-        </div>
+    <!-- MAIN SCROLLABLE CONTENT -->
+    <main class="main-content">
+
+      <!-- HERO NOW PLAYING VINYL STAGE -->
+      <section class="hero-player-stage">
         
-        <div class="lcd-track-info">
-          <div class="lcd-track-num" id="lcd-track-num">CH 0001</div>
-          <div class="lcd-title-marquee">
-            <h2 id="current-song-title">Select a Song to Begin</h2>
-          </div>
-          <p id="current-song-artist">5,026 Classic Bollywood & Geetmala Collection</p>
-        </div>
-
-        <!-- PROGRESS BAR -->
-        <div class="lcd-progress-container">
-          <input type="range" id="seek-bar" min="0" max="100" value="0" step="0.1">
-        </div>
-      </div>
-
-      <!-- ROTARY DIAL & MODE SELECTOR -->
-      <div class="carvaan-controls-row">
-        <!-- MODE BUTTONS -->
-        <div class="mode-toggles">
-          <button class="mode-btn active" data-mode="all">
-            <i class="fa-solid fa-music"></i>
-            <span>All 5000</span>
-          </button>
-          <button class="mode-btn" data-mode="artists">
-            <i class="fa-solid fa-microphone-lines"></i>
-            <span>Artists</span>
-          </button>
-          <button class="mode-btn" data-mode="geetmala">
-            <i class="fa-solid fa-tower-broadcast"></i>
-            <span>Geetmala</span>
-          </button>
-          <button class="mode-btn" data-mode="interviews">
-            <i class="fa-solid fa-comments"></i>
-            <span>Interviews</span>
-          </button>
-          <button class="mode-btn" data-mode="favorites">
-            <i class="fa-solid fa-heart"></i>
-            <span>Favorites</span>
-          </button>
-        </div>
-
-        <!-- ROTARY DIAL WHEEL -->
-        <div class="dial-container">
-          <div class="dial-wheel" id="rotary-dial">
-            <div class="dial-center">
-              <i class="fa-solid fa-compact-disc spin-vinyl" id="vinyl-icon"></i>
+        <!-- VINYL & TONEARM DECK -->
+        <div class="turntable-deck">
+          <div class="vinyl-platter">
+            <div class="vinyl-disc" id="vinyl-disc">
+              <div class="vinyl-grooves"></div>
+              <div class="vinyl-label">
+                <div class="vinyl-logo">
+                  <i class="fa-solid fa-record-vinyl"></i>
+                  <span>CARVAAN</span>
+                </div>
+              </div>
             </div>
-            <div class="dial-notch notch-1"></div>
-            <div class="dial-notch notch-2"></div>
-            <div class="dial-notch notch-3"></div>
-            <div class="dial-notch notch-4"></div>
           </div>
-          <span class="dial-label">ROTARY TUNER</span>
+          <div class="tonearm" id="tonearm">
+            <div class="tonearm-base"></div>
+            <div class="tonearm-rod"></div>
+            <div class="tonearm-head"></div>
+          </div>
         </div>
-      </div>
 
-      <!-- MAIN PLAYBACK CONTROLS -->
-      <div class="playback-controls-row">
-        <button id="btn-shuffle" class="control-btn" title="Shuffle">
-          <i class="fa-solid fa-shuffle"></i>
-        </button>
-        <button id="btn-prev" class="control-btn" title="Previous Track">
-          <i class="fa-solid fa-backward-step"></i>
-        </button>
-        <button id="btn-play-pause" class="control-btn play-main" title="Play/Pause">
-          <i class="fa-solid fa-play" id="play-icon"></i>
-        </button>
-        <button id="btn-next" class="control-btn" title="Next Track">
-          <i class="fa-solid fa-forward-step"></i>
-        </button>
-        <button id="btn-lyrics-toggle" class="control-btn active" title="Show Lyrics">
-          <i class="fa-solid fa-quote-left"></i>
-        </button>
-      </div>
-
-      <!-- LYRICS DRAWER / TAB -->
-      <section class="lyrics-section" id="lyrics-section">
-        <div class="lyrics-header">
-          <div class="lyrics-title">
-            <i class="fa-solid fa-align-left"></i>
-            <span>REAL-TIME SYNCHRONIZED LYRICS</span>
+        <!-- OLED DISPLAY CARD -->
+        <div class="oled-display-card">
+          <div class="oled-top-row">
+            <div class="oled-channel" id="oled-channel-badge">CH 0001</div>
+            <div class="oled-equalizer" id="oled-eq">
+              <span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+            </div>
+            <div class="oled-mode" id="oled-mode-badge">
+              <i class="fa-solid fa-tower-broadcast"></i> AMEEN SAYANI GEETMALA
+            </div>
           </div>
-          <div class="lyrics-controls">
-            <button id="btn-lyrics-script" class="lyrics-pill" title="Toggle Script">
-              <span id="script-mode-text">Devanagari / Roman</span>
+
+          <div class="oled-track-details">
+            <h1 class="track-title-text" id="track-title">Select a Song to Begin</h1>
+            <p class="track-artist-text" id="track-artist">5,026 Classic Bollywood & Geetmala Collection</p>
+          </div>
+
+          <!-- TIME & SEEKBAR -->
+          <div class="seek-wrapper">
+            <input type="range" id="seek-bar" min="0" max="100" value="0" step="0.1" class="custom-slider">
+            <div class="time-display">
+              <span id="current-time">00:00</span>
+              <span id="total-duration">00:00</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- MAIN PLAYBACK CONTROLS -->
+        <div class="luxury-controls-bar">
+          <button id="btn-shuffle" class="secondary-control-btn" title="Shuffle">
+            <i class="fa-solid fa-shuffle"></i>
+          </button>
+          <button id="btn-prev" class="skip-control-btn" title="Previous Track">
+            <i class="fa-solid fa-backward-step"></i>
+          </button>
+          <button id="btn-play-pause" class="hero-play-btn" title="Play/Pause">
+            <i class="fa-solid fa-play" id="play-icon"></i>
+          </button>
+          <button id="btn-next" class="skip-control-btn" title="Next Track">
+            <i class="fa-solid fa-forward-step"></i>
+          </button>
+          <button id="btn-fav-current" class="secondary-control-btn" title="Favorite">
+            <i class="fa-regular fa-heart" id="hero-fav-icon"></i>
+          </button>
+        </div>
+
+      </section>
+
+      <!-- ROTARY DIAL & MODE CHANNEL SELECTOR -->
+      <section class="channel-tuner-section">
+        <div class="tuner-card">
+          <div class="tuner-rotary-box">
+            <div class="rotary-knob" id="rotary-knob">
+              <div class="knob-face">
+                <div class="knob-dot"></div>
+              </div>
+            </div>
+            <span class="rotary-label">ROTATE TO TUNE</span>
+          </div>
+
+          <div class="channel-buttons-grid">
+            <button class="channel-pill active" data-mode="all">
+              <i class="fa-solid fa-music"></i>
+              <span>All 5,000</span>
+            </button>
+            <button class="channel-pill" data-mode="artists">
+              <i class="fa-solid fa-microphone-lines"></i>
+              <span>Artists</span>
+            </button>
+            <button class="channel-pill" data-mode="geetmala">
+              <i class="fa-solid fa-radio"></i>
+              <span>Geetmala</span>
+            </button>
+            <button class="channel-pill" data-mode="interviews">
+              <i class="fa-solid fa-comments"></i>
+              <span>Interviews</span>
+            </button>
+            <button class="channel-pill" data-mode="favorites">
+              <i class="fa-solid fa-heart"></i>
+              <span>Favorites</span>
             </button>
           </div>
         </div>
-        <div class="lyrics-container" id="lyrics-container">
-          <div class="lyrics-placeholder">
-            <i class="fa-solid fa-music fa-2x"></i>
-            <p>Playing song lyrics will synchronize automatically...</p>
+      </section>
+
+      <!-- ARTIST SPOTLIGHT CAROUSEL -->
+      <section class="artist-spotlight-section">
+        <div class="section-title-row">
+          <h3><i class="fa-solid fa-crown"></i> LEGENDARY ARTISTS</h3>
+          <span class="section-subtitle">Tap to Filter</span>
+        </div>
+        <div class="artist-avatar-scroll" id="artist-avatars">
+          <!-- Populated dynamically via JS -->
+        </div>
+      </section>
+
+      <!-- REAL-TIME KARAOKE LYRICS DRAWER -->
+      <section class="lyrics-stage-section" id="lyrics-stage">
+        <div class="lyrics-stage-header">
+          <div class="lyrics-badge">
+            <i class="fa-solid fa-align-left"></i>
+            <span>SYNCHRONIZED KARAOKE LYRICS</span>
+          </div>
+          <span class="lyrics-hint">Tap any line to jump</span>
+        </div>
+        <div class="lyrics-scroll-box" id="lyrics-container">
+          <div class="lyrics-empty-state">
+            <i class="fa-solid fa-microphone fa-bounce"></i>
+            <p>Select a song to start real-time lyrics synchronization...</p>
           </div>
         </div>
       </section>
 
-      <!-- SEARCH & FILTER BAR -->
-      <section class="search-section">
-        <div class="search-box">
-          <i class="fa-solid fa-magnifying-glass"></i>
-          <input type="text" id="search-input" placeholder="Search 5,026 songs, singers, Geetmala...">
-          <button id="btn-clear-search" class="clear-btn" style="display:none;">&times;</button>
+      <!-- SEARCH & CATALOG DISCOVERY -->
+      <section class="catalog-section">
+        <div class="search-bar-luxury">
+          <i class="fa-solid fa-magnifying-glass search-icon"></i>
+          <input type="text" id="search-input" placeholder="Search 5,026 songs by title, singer, Geetmala year...">
+          <button id="btn-clear-search" class="clear-search-btn" style="display:none;">&times;</button>
         </div>
 
-        <!-- ARTIST QUICK CHIPS -->
-        <div class="artist-chips-scroll" id="artist-chips">
-          <button class="chip active" data-artist="ALL">All Songs (5,026)</button>
-          <button class="chip" data-artist="Kishore Kumar">Kishore Kumar</button>
-          <button class="chip" data-artist="Lata Mangeshkar">Lata Mangeshkar</button>
-          <button class="chip" data-artist="Mohammed Rafi">Mohammed Rafi</button>
-          <button class="chip" data-artist="Mukesh">Mukesh</button>
-          <button class="chip" data-artist="Asha Bhosle">Asha Bhosle</button>
-          <button class="chip" data-artist="R.D. Burman">R.D. Burman</button>
-          <button class="chip" data-artist="Ameen Sayani">Ameen Sayani</button>
-          <button class="chip" data-artist="Jagjit Singh">Jagjit Singh</button>
+        <div class="catalog-header-meta">
+          <span id="catalog-count-badge">5,026 Songs Available</span>
+          <button id="btn-play-all-shuffled" class="play-all-pill">
+            <i class="fa-solid fa-shuffle"></i> Shuffle All
+          </button>
         </div>
-      </section>
 
-      <!-- SONG LIST / PLAYLIST -->
-      <section class="playlist-section">
-        <div class="playlist-meta">
-          <span id="playlist-count">Showing 5,026 Songs</span>
-          <div class="playlist-actions">
-            <button id="btn-play-all" class="text-btn"><i class="fa-solid fa-circle-play"></i> Play All</button>
-          </div>
-        </div>
-        <div class="song-list" id="song-list">
-          <!-- Virtual dynamic song items render here -->
+        <!-- VIRTUALIZED SONG LIST -->
+        <div class="luxury-song-list" id="song-list">
+          <!-- Dynamic tracks render here -->
         </div>
       </section>
 
@@ -182,32 +208,31 @@
     <!-- HIDDEN AUDIO ENGINE -->
     <audio id="audio-engine" preload="auto"></audio>
 
-    <!-- SOURCE SELECTOR MODAL -->
-    <div class="modal" id="source-modal">
-      <div class="modal-card">
-        <div class="modal-header">
-          <h3><i class="fa-solid fa-sliders"></i> Audio Storage Source</h3>
-          <button class="modal-close" id="btn-close-modal">&times;</button>
+    <!-- SOURCE SETTINGS MODAL -->
+    <div class="glass-modal" id="source-modal">
+      <div class="glass-modal-card">
+        <div class="glass-modal-header">
+          <h3><i class="fa-solid fa-sliders"></i> Audio Stream Configuration</h3>
+          <button class="glass-close-btn" id="btn-close-modal">&times;</button>
         </div>
-        <div class="modal-body">
-          <div class="source-option active" id="opt-local">
-            <div class="opt-icon"><i class="fa-solid fa-folder-tree"></i></div>
-            <div class="opt-info">
-              <h4>Local Carvaan Folder (Offline)</h4>
-              <p>Plays directly from your local/phone storage folder (<code>I:\carvaan</code> or <code>/Music/carvaan</code>).</p>
-              <button class="primary-btn" id="btn-pick-folder"><i class="fa-solid fa-folder-open"></i> Link Carvaan Folder</button>
-              <div id="local-status" class="status-msg">Ready (Local Server / Native Folder)</div>
+        <div class="glass-modal-body">
+          <div class="source-card active" id="card-archive">
+            <div class="source-card-badge"><i class="fa-solid fa-cloud-bolt"></i> Cloud Streaming (Default)</div>
+            <h4>Archive.org 5000 Songs Collection</h4>
+            <p>Streams all 5,026 tracks live from the cloud with <strong>0 MB storage taken on your phone</strong>.</p>
+            <div class="source-url-display">
+              <code>https://archive.org/download/saregama-carvaan-5000-songs-collection/</code>
             </div>
           </div>
 
-          <div class="source-option" id="opt-cloud">
-            <div class="opt-icon"><i class="fa-solid fa-cloud-arrow-up"></i></div>
-            <div class="opt-info">
-              <h4>Cloud Stream / Custom Server</h4>
-              <p>Stream directly from your Cloudflare R2 / AWS S3 / Web Server.</p>
-              <input type="text" id="cloud-url-input" placeholder="https://pub-xxxx.r2.dev or http://localhost:8000">
-              <button class="primary-btn" id="btn-save-cloud">Save Cloud Endpoint</button>
-            </div>
+          <div class="source-card" id="card-local">
+            <div class="source-card-badge"><i class="fa-solid fa-folder"></i> Local Storage Mode (Offline)</div>
+            <h4>Device Music Folder</h4>
+            <p>Use if you copy the <code>carvaan</code> folder to your phone or laptop storage.</p>
+            <button class="glass-action-btn" id="btn-pick-folder">
+              <i class="fa-solid fa-folder-open"></i> Link Local Folder
+            </button>
+            <div id="local-status-msg" class="status-indicator">Ready</div>
           </div>
         </div>
       </div>
