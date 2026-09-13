@@ -7,45 +7,62 @@ export interface VersionConfig {
   message_english: string;
 }
 
-export const CURRENT_APP_VERSION = 1.2;
+export const CURRENT_APP_VERSION = 1.3;
 
-const CLOUD_GIST_ID = 'a62d2ce04fb2cad264471951a42790da';
-const RAW_GIST_URL = `https://gist.githubusercontent.com/ashirvadraj/${CLOUD_GIST_ID}/raw/app_version_config.json`;
-const REPO_FALLBACK_URL = 'https://raw.githubusercontent.com/ashirvadraj/saregama-carvaan/master/version_config.json';
-const API_GIST_URL = `https://api.github.com/gists/${CLOUD_GIST_ID}`;
+const REPO_RAW_URL = 'https://raw.githubusercontent.com/ashirvadraj/saregama-carvaan/master/version_config.json';
+const REPO_API_URL = 'https://api.github.com/repos/ashirvadraj/saregama-carvaan/contents/version_config.json';
+
+// Helper to sanitize and purge any legacy Sunehre Geet / version 69 lock
+function sanitizeStoredLock(): { isLocked: boolean; config: VersionConfig | null } {
+  try {
+    const raw = localStorage.getItem('carvaan_cached_version_config');
+    if (raw && (raw.includes('sunehre-geet') || raw.includes('69') || raw.includes('69.0'))) {
+      localStorage.removeItem('carvaan_app_locked');
+      localStorage.removeItem('carvaan_cached_version_config');
+      return { isLocked: false, config: null };
+    }
+    const isLocked = localStorage.getItem('carvaan_app_locked') === 'true';
+    const config = raw ? JSON.parse(raw) : null;
+    return { isLocked, config };
+  } catch {
+    return { isLocked: false, config: null };
+  }
+}
+
+const initialSanitized = sanitizeStoredLock();
 
 export const VersionService = {
-  isLocked: localStorage.getItem('carvaan_app_locked') === 'true',
-  cachedConfig: (() => {
-    try {
-      const raw = localStorage.getItem('carvaan_cached_version_config');
-      return raw ? JSON.parse(raw) : null;
-    } catch {
-      return null;
-    }
-  })() as VersionConfig | null,
+  isLocked: initialSanitized.isLocked,
+  cachedConfig: initialSanitized.config,
 
   parseConfig(content: any): VersionConfig | null {
     if (!content) return null;
     try {
-      const json = typeof content === 'string' ? JSON.parse(content) : content;
-      if (json && typeof json.min_supported_version === 'number') {
-        return json as VersionConfig;
+      let json = typeof content === 'string' ? JSON.parse(content) : content;
+      // Handle GitHub contents API base64 response
+      if (json && json.content && json.encoding === 'base64') {
+        const decoded = atob(json.content.replace(/\n/g, ''));
+        json = JSON.parse(decoded);
       }
-      if (json?.files?.['app_version_config.json']?.content) {
-        return JSON.parse(json.files['app_version_config.json'].content);
+      if (json && typeof json.min_supported_version === 'number') {
+        // Double check: if someone returns sunehre-geet or 69, reject it
+        if (json.update_url && json.update_url.includes('sunehre-geet')) {
+          return null;
+        }
+        return json as VersionConfig;
       }
     } catch {}
     return null;
   },
 
   applyHardLock(config?: VersionConfig): void {
+    if (!config || (config.update_url && config.update_url.includes('sunehre-geet'))) {
+      return;
+    }
     this.isLocked = true;
     try {
       localStorage.setItem('carvaan_app_locked', 'true');
-      if (config) {
-        localStorage.setItem('carvaan_cached_version_config', JSON.stringify(config));
-      }
+      localStorage.setItem('carvaan_cached_version_config', JSON.stringify(config));
       window.dispatchEvent(new CustomEvent('carvaanVersionLocked', { detail: { config } }));
       const cap = (window as any).Capacitor;
       if (cap?.Plugins?.MediaNotificationPlugin?.hideNotification) {
@@ -55,18 +72,22 @@ export const VersionService = {
   },
 
   async checkVersion(): Promise<{ isUpdateRequired: boolean; config: VersionConfig | null }> {
-    if (this.isLocked) {
-      this.applyHardLock(this.cachedConfig || undefined);
+    // Purge any stale legacy lock
+    const current = sanitizeStoredLock();
+    this.isLocked = current.isLocked;
+    this.cachedConfig = current.config;
+
+    if (this.isLocked && this.cachedConfig) {
+      this.applyHardLock(this.cachedConfig);
     }
 
     const timestamp = Date.now();
     const urls = [
-      `${RAW_GIST_URL}?_t=${timestamp}`,
-      `${REPO_FALLBACK_URL}?_t=${timestamp}`,
-      `${API_GIST_URL}?_t=${timestamp}`,
+      `${REPO_RAW_URL}?_t=${timestamp}`,
+      `${REPO_API_URL}?_t=${timestamp}`,
     ];
 
-    // Method 1: Native Java HTTP via MediaNotificationPlugin (100% bypasses CORS, preflight, and webview cache)
+    // Method 1: Native Java HTTP via MediaNotificationPlugin (CORS bypass)
     try {
       const cap = (window as any).Capacitor;
       if (cap?.Plugins?.MediaNotificationPlugin?.fetchHttpUrl) {
@@ -92,7 +113,7 @@ export const VersionService = {
       }
     } catch {}
 
-    // Method 2: Clean fetch WITHOUT custom headers (so NO OPTIONS preflight is sent, passing CORS *)
+    // Method 2: Standard fetch
     for (const url of urls) {
       try {
         const res = await fetch(url);

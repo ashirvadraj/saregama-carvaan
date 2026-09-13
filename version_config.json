@@ -1,0 +1,8 @@
+﻿{
+  "min_supported_version": 1.0,
+  "latest_version": 1.2,
+  "force_update": false,
+  "update_url": "https://github.com/ashirvadraj/saregama-carvaan/releases/latest",
+  "message_hindi": "सारेगामा कारवां का नया वर्ज़न उपलब्ध है! कृपया अभी अपडेट करें।",
+  "message_english": "A new version of Saregama Carvaan is available! Please update to continue."
+}
