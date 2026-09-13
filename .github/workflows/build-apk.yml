@@ -60,16 +60,24 @@ jobs:
         name: Saregama-Carvaan-v1.0.0-APK
         path: android/app/build/outputs/apk/debug/app-debug.apk
 
+    - name: Prepare Named APK
+      run: |
+        cp android/app/build/outputs/apk/debug/app-debug.apk saregama-carvaan.apk
+
     - name: Publish GitHub Release with APK
       uses: softprops/action-gh-release@v2
       with:
         tag_name: v1.0.0
         name: Saregama Carvaan v1.0.0 APK
+        make_latest: true
         body: |
           ### 📻 Saregama Carvaan 5,000 Songs Mobile App
-          - **Download:** Download `app-debug.apk` below and install directly on your Android mobile.
-          - **Features:** 5,026 classic songs, Ameen Sayani Geetmala countdowns, and real-time synchronized scrolling lyrics.
-          - **Cloud Collection:** [Download/Stream from Mega](https://mega.nz/folder/VzAVUJBB#RyX1V3cxw7jyNu4k6aYebg)
-        files: android/app/build/outputs/apk/debug/app-debug.apk
+          - **Direct Download:** Download `saregama-carvaan.apk` or `app-debug.apk` below and install directly on your Android mobile.
+          - **Features:** 5,026 classic Bollywood songs, Ameen Sayani Geetmala countdowns, synchronized lyrics, and 24/7 cloud streaming.
+          - **Live Web App:** [https://ashirvadraj.github.io/saregama-carvaan/](https://ashirvadraj.github.io/saregama-carvaan/)
+          - **Archive.org Collection:** [https://archive.org/details/saregama-carvaan-5000-songs-collection](https://archive.org/details/saregama-carvaan-5000-songs-collection)
+        files: |
+          android/app/build/outputs/apk/debug/app-debug.apk
+          saregama-carvaan.apk
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
