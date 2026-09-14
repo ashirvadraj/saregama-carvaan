@@ -44,34 +44,6 @@ export const MainApp: React.FC = () => {
   const { isFullPlayerOpen, setIsFullPlayerOpen, pause, playSong } = useAudio();
   const { isAccountModalOpen, setIsAccountModalOpen } = useAuth();
 
-  // Screen WakeLock to prevent screen timeout and keep device awake
-  useEffect(() => {
-    let wakeLockSentinel: any = null;
-    const requestWakeLock = async () => {
-      try {
-        if ('wakeLock' in navigator) {
-          wakeLockSentinel = await (navigator as any).wakeLock.request('screen');
-        }
-      } catch (err) {}
-    };
-
-    requestWakeLock();
-
-    const handleVisibilityChange = () => {
-      if (document.visibilityState === 'visible') {
-        requestWakeLock();
-      }
-    };
-
-    document.addEventListener('visibilitychange', handleVisibilityChange);
-    return () => {
-      document.removeEventListener('visibilitychange', handleVisibilityChange);
-      if (wakeLockSentinel) {
-        wakeLockSentinel.release().catch(() => {});
-      }
-    };
-  }, []);
-
   // Check remote minimum required version on app launch, on resume, and periodically every 30s
   useEffect(() => {
     const handleCheck = () => {
