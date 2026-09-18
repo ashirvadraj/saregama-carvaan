@@ -27,11 +27,52 @@ interface PlaylistContextType {
 const PlaylistContext = createContext<PlaylistContextType | undefined>(undefined);
 
 const STORAGE_KEYS = {
-  LIKED: 'carvaan_liked_v3',
-  LIKED_MAP: 'carvaan_liked_map_v3',
-  PLAYLISTS: 'carvaan_playlists_v3',
-  RECENT: 'carvaan_recent_v3',
+  LIKED: 'carvaan_liked_v4',
+  LIKED_MAP: 'carvaan_liked_map_v4',
+  PLAYLISTS: 'carvaan_playlists_v4',
+  RECENT: 'carvaan_recent_v4',
 };
+
+// One-time purge of legacy contaminated storage (e.g. the 3,795 songs dump)
+const purgeLegacyContaminatedData = () => {
+  try {
+    const legacyKeys = [
+      'carvaan_liked_v3',
+      'carvaan_liked_map_v3',
+      'carvaan_playlists_v3',
+      'carvaan_recent_v3',
+      'carvaan_liked_v2',
+      'carvaan_liked_map_v2',
+      'carvaan_playlists_v2',
+      'carvaan_recent_v2',
+      'carvaan_liked_v1',
+      'carvaan_last_backup_v2',
+      'carvaan_last_backup_v3',
+    ];
+    legacyKeys.forEach(k => localStorage.removeItem(k));
+
+    // Remove legacy local backup keys
+    Object.keys(localStorage).forEach(key => {
+      if (key.startsWith('carvaan_backup_') && !key.startsWith('carvaan_backup_v4_')) {
+        localStorage.removeItem(key);
+      }
+    });
+
+    // Check if v4 was corrupted by any prior dump (> 1000 songs)
+    const curLiked = localStorage.getItem(STORAGE_KEYS.LIKED);
+    if (curLiked) {
+      try {
+        const parsed = JSON.parse(curLiked);
+        if (Array.isArray(parsed) && parsed.length > 1000) {
+          localStorage.removeItem(STORAGE_KEYS.LIKED);
+          localStorage.removeItem(STORAGE_KEYS.LIKED_MAP);
+        }
+      } catch {}
+    }
+  } catch {}
+};
+
+purgeLegacyContaminatedData();
 
 const DEFAULT_PLAYLISTS: Playlist[] = [];
 
@@ -44,7 +85,12 @@ export const PlaylistProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   const [likedSongIds, setLikedSongIds] = useState<string[]>(() => {
     try {
       const saved = localStorage.getItem(STORAGE_KEYS.LIKED);
-      return saved ? JSON.parse(saved) : [];
+      if (!saved) return [];
+      const parsed = JSON.parse(saved);
+      if (Array.isArray(parsed) && parsed.length <= 1000) {
+        return parsed;
+      }
+      return [];
     } catch {
       return [];
     }
@@ -136,9 +182,13 @@ export const PlaylistProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   };
 
   const restoreFromCloud = async (customEmail?: string): Promise<{ success: boolean; count: number }> => {
-    const emailToUse = customEmail || user?.email || 'default';
+    const emailToUse = customEmail || user?.email;
+    if (!emailToUse || emailToUse === 'default' || emailToUse === 'local_user@carvaan.app' || emailToUse.includes('sunehre')) {
+      hasInitialRestoreAttempted.current = true;
+      return { success: false, count: 0 };
+    }
     const backup = await CloudSyncService.fetchCloudBackup(emailToUse);
-    if (backup) {
+    if (backup && Array.isArray(backup.likedSongIds) && backup.likedSongIds.length <= 1500) {
       // Step 1: Restore song objects into map
       const restoredMap: Record<string, Song> = {};
       if (backup.likedSongs && Array.isArray(backup.likedSongs) && backup.likedSongs.length > 0) {
@@ -146,22 +196,19 @@ export const PlaylistProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         setLikedSongsMap(prev => ({ ...prev, ...restoredMap }));
       }
 
-      // Step 2: Restore ALL liked IDs (Never drop ANY id!)
-      let count = 0;
-      if (backup.likedSongIds && Array.isArray(backup.likedSongIds) && backup.likedSongIds.length > 0) {
-        setLikedSongIds(prev => Array.from(new Set([...prev, ...backup.likedSongIds])));
-        count = backup.likedSongIds.length;
+      // Step 2: Restore liked IDs
+      setLikedSongIds(backup.likedSongIds);
+      const count = backup.likedSongIds.length;
 
-        // Background resolve: For any online song missing from map and SONGS, fetch details
-        backup.likedSongIds.forEach((id: string) => {
-          if (!restoredMap[id] && !SONGS.find(s => s.id === id)) {
-            if (id.startsWith('online-') || id.startsWith('saavn-')) {
-              const pid = id.replace(/^(online-|saavn-)/, '');
-              resolveOnlineSongDetails(id, pid);
-            }
+      // Background resolve: For any online song missing from map and SONGS, fetch details
+      backup.likedSongIds.forEach((id: string) => {
+        if (!restoredMap[id] && !SONGS.find(s => s.id === id)) {
+          if (id.startsWith('online-') || id.startsWith('saavn-')) {
+            const pid = id.replace(/^(online-|saavn-)/, '');
+            resolveOnlineSongDetails(id, pid);
           }
-        });
-      }
+        }
+      });
 
       if (backup.playlists && Array.isArray(backup.playlists) && backup.playlists.length > 0) {
         setPlaylists(prev => {
@@ -183,7 +230,7 @@ export const PlaylistProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   // On App Launch: Do not auto-fetch from cloud for anonymous users so library starts clean (0 liked, 0 playlists)
   useEffect(() => {
     const initUserData = async () => {
-      if (user?.email && user.email !== 'default' && user.email !== 'local_user@carvaan.app') {
+      if (user?.email && user.email !== 'default' && user.email !== 'local_user@carvaan.app' && !user.email.includes('sunehre')) {
         setIsRestoring(true);
         try {
           await restoreFromCloud(user.email);
@@ -217,7 +264,7 @@ export const PlaylistProvider: React.FC<{ children: React.ReactNode }> = ({ chil
           id: id,
           title: 'पसंदीदा गीत (Saved Song)',
           artist: 'Classic Evergreen Melody',
-          artists: ['Sunehre Geet'],
+          artists: ['Saregama Carvaan'],
           movie: 'Golden Classics',
           year: 1980,
           decade: '80s',
@@ -366,16 +413,18 @@ export const PlaylistProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       setLikedSongIds(prev => Array.from(new Set([...prev, ...ids])));
     }
     if (restoredLiked && Array.isArray(restoredLiked)) {
-      setLikedSongIds(prev => Array.from(new Set([...prev, ...restoredLiked])));
-      // Auto-resolve missing online songs in background
-      restoredLiked.forEach((id: string) => {
-        if (!likedSongsMap[id] && !SONGS.find(s => s.id === id)) {
-          if (id.startsWith('online-') || id.startsWith('saavn-')) {
-            const pid = id.replace(/^(online-|saavn-)/, '');
-            resolveOnlineSongDetails(id, pid);
+      if (restoredLiked.length <= 1500) {
+        setLikedSongIds(prev => Array.from(new Set([...prev, ...restoredLiked])));
+        // Auto-resolve missing online songs in background
+        restoredLiked.forEach((id: string) => {
+          if (!likedSongsMap[id] && !SONGS.find(s => s.id === id)) {
+            if (id.startsWith('online-') || id.startsWith('saavn-')) {
+              const pid = id.replace(/^(online-|saavn-)/, '');
+              resolveOnlineSongDetails(id, pid);
+            }
           }
-        }
-      });
+        });
+      }
     }
     if (restoredPlaylists && Array.isArray(restoredPlaylists)) {
       setPlaylists(prev => {

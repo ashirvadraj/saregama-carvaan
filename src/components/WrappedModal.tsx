@@ -148,12 +148,12 @@ export const WrappedModal: React.FC<WrappedModalProps> = ({ isOpen, onClose }) =
   };
 
   const handleShare = async () => {
-    const shareText = `🎵 My Sunehre Geet ${stats.periodLabel}!\n⏱️ ${stats.totalMinutes.toLocaleString()} minutes of golden melodies\n🏆 Top Song: ${stats.topSong?.title || 'Evergreen Classic'}\n🎤 Top Singer: ${stats.topArtist}\n✨ Personality: ${stats.personality.title} (${stats.personality.badgeEmoji})\n\nExplore timeless Bollywood on Sunehre Geet!`;
+    const shareText = `🎵 My Saregama Carvaan ${stats.periodLabel}!\n⏱️ ${stats.totalMinutes.toLocaleString()} minutes of golden melodies\n🏆 Top Song: ${stats.topSong?.title || 'Evergreen Classic'}\n🎤 Top Singer: ${stats.topArtist}\n✨ Personality: ${stats.personality.title} (${stats.personality.badgeEmoji})\n\nExplore timeless Bollywood on Saregama Carvaan!`;
 
     if (navigator.share) {
       try {
         await navigator.share({
-          title: `My Sunehre Geet ${stats.periodLabel}`,
+          title: `My Saregama Carvaan ${stats.periodLabel}`,
           text: shareText,
         });
         return;
@@ -336,7 +336,7 @@ export const WrappedModal: React.FC<WrappedModalProps> = ({ isOpen, onClose }) =
 
                   <div className="space-y-2 max-w-xs">
                     <div className="inline-block px-3 py-1 rounded-full bg-amber-500/20 text-amber-300 font-bold text-xs uppercase tracking-widest border border-amber-500/30">
-                      Sunehre Geet Wrapped
+                      Saregama Carvaan Wrapped
                     </div>
                     <h2 className="text-3xl font-extrabold text-[#FFF4E0] font-serif leading-tight">
                       {stats.periodLabel}
@@ -826,7 +826,7 @@ export const WrappedModal: React.FC<WrappedModalProps> = ({ isOpen, onClose }) =
                     <div className="flex items-center justify-between border-b border-white/10 pb-2">
                       <div className="flex items-center gap-1.5">
                         <Disc3 className="w-4 h-4 text-amber-400" />
-                        <span className="font-bold text-xs text-amber-300 font-serif">Sunehre Geet</span>
+                        <span className="font-bold text-xs text-amber-300 font-serif">Saregama Carvaan</span>
                       </div>
                       <span className="text-[10px] text-white/60 font-semibold">{stats.periodLabel}</span>
                     </div>

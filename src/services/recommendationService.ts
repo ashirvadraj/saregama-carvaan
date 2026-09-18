@@ -1,4 +1,4 @@
-// Sunehre Geet - Smart Song Recommendation & Notification Service
+// Saregama Carvaan - Smart Song Recommendation & Notification Service
 import { SONGS } from '../data/songs';
 import { Song } from '../types';
 

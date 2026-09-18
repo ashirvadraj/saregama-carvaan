@@ -37,7 +37,7 @@ export interface WrappedStats {
   genreBreakdown: { genre: string; percentage: number; emoji: string }[];
 }
 
-const STORAGE_KEY = 'sunehre_listening_history_v1';
+const STORAGE_KEY = 'carvaan_listening_history_v1';
 const MAX_HISTORY_ITEMS = 5000;
 
 export const WrappedService = {
@@ -54,16 +54,18 @@ export const WrappedService = {
         duration: Math.max(30, Math.min(600, Math.round(durationListened))),
       };
 
-      history.unshift(newEntry);
+      history.push(newEntry);
+
+      // Keep within limit
       if (history.length > MAX_HISTORY_ITEMS) {
-        history.length = MAX_HISTORY_ITEMS;
+        history.splice(0, history.length - MAX_HISTORY_ITEMS);
       }
+
       localStorage.setItem(STORAGE_KEY, JSON.stringify(history));
-    } catch (e) {
-      console.warn('Error recording listening history:', e);
-    }
+    } catch {}
   },
 
+  // Get raw history array
   getRawHistory(): ListeningLogEntry[] {
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
@@ -115,8 +117,8 @@ export const WrappedService = {
 
     const periodLabel =
       periodType === 'yearly'
-        ? `${targetYear} Sunehre Geet Wrapped`
-        : `${monthNames[targetMonth]} ${targetYear} Sunehre Geet Wrapped`;
+        ? `${targetYear} Saregama Carvaan Wrapped`
+        : `${monthNames[targetMonth]} ${targetYear} Saregama Carvaan Wrapped`;
 
     const allHistory = this.getRawHistory();
 

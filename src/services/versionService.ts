@@ -7,7 +7,7 @@ export interface VersionConfig {
   message_english: string;
 }
 
-export const CURRENT_APP_VERSION = 1.3;
+export const CURRENT_APP_VERSION = 1.4;
 
 const REPO_RAW_URL = 'https://raw.githubusercontent.com/ashirvadraj/saregama-carvaan/master/version_config.json';
 const REPO_API_URL = 'https://api.github.com/repos/ashirvadraj/saregama-carvaan/contents/version_config.json';

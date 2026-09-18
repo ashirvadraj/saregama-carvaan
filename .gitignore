@@ -1,4 +1,4 @@
-﻿node_modules/
+node_modules/
 android/.gradle/
 android/app/build/
 android/build/
@@ -6,3 +6,4 @@ android/build/
 __pycache__/
 .DS_Store
 Thumbs.db
+*.apk
