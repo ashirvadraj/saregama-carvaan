@@ -27,7 +27,7 @@ jobs:
         distribution: 'temurin'
         java-version: '21'
 
-- name: Install Node dependencies
+    - name: Install Node dependencies
       run: |
         npm install
 
