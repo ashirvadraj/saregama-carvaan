@@ -27,10 +27,7 @@ jobs:
         distribution: 'temurin'
         java-version: '21'
 
-    - name: Set up Android SDK
-      uses: android-actions/setup-android@v3
-
-    - name: Install Node dependencies
+- name: Install Node dependencies
       run: |
         npm install
 
