@@ -7,7 +7,7 @@ android {
         applicationId 'com.saregama.carvaan'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode (System.getenv("GITHUB_RUN_NUMBER") ? Integer.parseInt(System.getenv("GITHUB_RUN_NUMBER")) + 100 : 5)
+        versionCode (System.getenv("GITHUB_RUN_NUMBER") ? Integer.parseInt(System.getenv("GITHUB_RUN_NUMBER")) + 200 : 140)
         versionName '1.4'
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
         aaptOptions {
@@ -20,6 +20,8 @@ android {
             storePassword 'carvaan_secure_2026'
             keyAlias 'carvaan'
             keyPassword 'carvaan_secure_2026'
+            v1SigningEnabled true
+            v2SigningEnabled true
         }
     }
     buildTypes {
